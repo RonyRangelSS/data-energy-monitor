@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-energia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-energia}
+      POSTGRES_DB: ${POSTGRES_DB:-energia}
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  db_teste:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-energia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-energia}
+      POSTGRES_DB: energia_teste
+    ports:
+      - "${POSTGRES_PORT_TESTE:-5435}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  dados_postgres:
