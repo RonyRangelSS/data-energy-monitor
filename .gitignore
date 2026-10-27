@@ -1,0 +1,42 @@
+# Documentação local (DP36)
+CLAUDE.md
+docs/
+.claude/
+
+# Configuração local
+.env
+
+# Dados (dataset referenciado, não incluído — DP24)
+dados/brutos/*
+dados/processados/*
+!dados/**/.gitkeep
+
+# Modelos treinados (métricas de experimentos são versionadas)
+artefatos/modelos/*
+!artefatos/modelos/.gitkeep
+
+# Saídas do notebook exploratório
+notebooks/saida/
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+build/
+dist/
+
+# Ferramentas
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Editor e sistema
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
