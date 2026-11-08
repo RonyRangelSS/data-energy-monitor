@@ -9,7 +9,7 @@ O sistema:
 3. exibe tudo em painéis em tempo quase real sobre reprodução acelerada de um dataset histórico real;
 4. registra experimentos reproduzíveis que comparam os modelos com baselines.
 
-> Status: Fases 0 (fundação) e 1 (dados) concluídas. Próxima: Fase 2 (previsão offline).
+> Status: Fases 0 (fundação) e 1 (dados) concluídas. Fase 2 (previsão offline) em andamento: seleção na validação concluída; teste ainda não executado.
 
 ## Dados
 
@@ -50,6 +50,21 @@ uv run python -m energy_monitor.experiments.e1_data_quality
 ```
 
 O comando lê `configs/e1_data_quality.yaml` e, para o D1 e o D2, gera a grade de 10 min em `data/processed/` e o relatório de qualidade em `artifacts/experiments/`. O relatório registra a configuração, o commit, as versões dos pacotes e o hash do arquivo de dados.
+
+## Experimento E5 (previsão)
+
+```powershell
+# 1. Seleção de janela de treino e hiperparâmetros, só com treino e validação
+uv run python -m energy_monitor.experiments.e5_forecasting --stage selection
+
+# 2. Congelamento do protocolo (exige o código commitado)
+uv run python -m energy_monitor.experiments.protocol_freeze
+
+# 3. Treino final e avaliação única no teste (falha sem o congelamento)
+uv run python -m energy_monitor.experiments.e5_forecasting --stage final
+```
+
+Use `--dataset d1` para rodar um conjunto por vez. A configuração está em `configs/e5_forecasting.yaml`.
 
 ## Testes e lint
 
