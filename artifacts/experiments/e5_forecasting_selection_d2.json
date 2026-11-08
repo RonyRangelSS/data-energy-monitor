@@ -1,0 +1,1032 @@
+{
+  "experiment": "e5_forecasting",
+  "created_at": "2026-11-08T14:41:34.631835+00:00",
+  "configuration": {
+    "experiment": "e5_forecasting",
+    "seed": 42,
+    "source_timezone": "Australia/Melbourne",
+    "train_fraction": 0.6,
+    "validation_fraction": 0.2,
+    "processed_dir": "data/processed",
+    "e1_report_dir": "artifacts/experiments",
+    "output_dir": "artifacts/experiments",
+    "models_dir": "artifacts/models",
+    "datasets": {
+      "d1": "data/raw/dataset1_combined.csv",
+      "d2": "data/raw/dataset2_combined.csv"
+    },
+    "horizons": {
+      "1h": 6,
+      "24h": 144
+    },
+    "training_start_candidates_local": [
+      "2019-03-15T00:00:00",
+      "2019-02-25T00:00:00",
+      null
+    ],
+    "motivation_full_period": true,
+    "default_hyperparameters": {
+      "lightgbm": {
+        "n_estimators": 300,
+        "num_leaves": 63,
+        "learning_rate": 0.05,
+        "min_child_samples": 20
+      }
+    },
+    "hyperparameter_grid": {
+      "lightgbm": {
+        "n_estimators": [
+          200,
+          500
+        ],
+        "num_leaves": [
+          31,
+          127
+        ],
+        "min_child_samples": [
+          20,
+          200
+        ]
+      }
+    }
+  },
+  "seed": 42,
+  "code_version": {
+    "commit": "5b87a8de718e92dd560830e5c77bc91b8bfc31cf",
+    "has_uncommitted_changes": false
+  },
+  "package_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "data_file": "dataset2_combined.csv",
+  "data_sha256": "2b5709f16e6ae94d274d1f2b111ef67a38edcca8e1d22c6c02182308042a08bb",
+  "metrics": {
+    "stage": "selection",
+    "dataset": "d2",
+    "eligible_hosts": 48,
+    "horizons": {
+      "1h": {
+        "models": {
+          "lightgbm": {
+            "with_load": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_target_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id",
+                "cpu_load",
+                "mem_pct",
+                "n_vms",
+                "cores",
+                "cores_used",
+                "net_rx",
+                "net_tx"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 395741,
+                  "validation_mae": 6.21537297201859
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 410237,
+                  "validation_mae": 6.714975649275875
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 506157,
+                  "validation_mae": 6.1333423331893115
+                }
+              ],
+              "chosen_window": {
+                "label": "file_start",
+                "start_utc": "2019-02-01T00:10:00+00:00",
+                "train_rows": 506157,
+                "validation_mae": 6.1333423331893115
+              },
+              "hyperparameter_search": [
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.127528792963463
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.278440458896659
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.060861175590902
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.389768809423273
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.210978727119513
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.376099033878471
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.163672589580901
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.465777013312401
+                }
+              ],
+              "chosen_hyperparameters": {
+                "n_estimators": 500,
+                "num_leaves": 31,
+                "learning_rate": 0.05,
+                "min_child_samples": 20
+              },
+              "validation": {
+                "rows": 133051,
+                "mae": 6.060861175590902,
+                "rmse": 12.29694645103443,
+                "mase": 0.3365447727895752,
+                "total": {
+                  "mae": 118.5942839593073,
+                  "rmse": 216.98222685328105,
+                  "mase": 0.08896461344099901,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.6002850017812611,
+                  "max_hosts_left_out": 3
+                }
+              },
+              "interval_coverage_5_95": 0.9154083772388032
+            },
+            "history_only": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_target_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 395741,
+                  "validation_mae": 6.373909061568399
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 410237,
+                  "validation_mae": 6.315392567857022
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 506157,
+                  "validation_mae": 6.086901111720594
+                }
+              ],
+              "chosen_window": {
+                "label": "file_start",
+                "start_utc": "2019-02-01T00:10:00+00:00",
+                "train_rows": 506157,
+                "validation_mae": 6.086901111720594
+              },
+              "hyperparameter_search": [
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.109518798924647
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.263688612898862
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.105556101235317
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 6.339989229041241
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.097344581055305
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.161216239009608
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.044884807102055
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 6.2164929377415765
+                }
+              ],
+              "chosen_hyperparameters": {
+                "n_estimators": 500,
+                "num_leaves": 31,
+                "learning_rate": 0.05,
+                "min_child_samples": 200
+              },
+              "validation": {
+                "rows": 133051,
+                "mae": 6.044884807102055,
+                "rmse": 12.391702043958048,
+                "mase": 0.34191749453563136,
+                "total": {
+                  "mae": 119.08703984454243,
+                  "rmse": 218.17852439007297,
+                  "mase": 0.0893342588858483,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.6002850017812611,
+                  "max_hosts_left_out": 3
+                }
+              },
+              "interval_coverage_5_95": 0.9321914153219443
+            }
+          },
+          "linear_regression": {
+            "with_load": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_target_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id",
+                "cpu_load",
+                "mem_pct",
+                "n_vms",
+                "cores",
+                "cores_used",
+                "net_rx",
+                "net_tx"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 395741,
+                  "validation_mae": 7.009516141238875
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 410237,
+                  "validation_mae": 7.338271678284003
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 506157,
+                  "validation_mae": 6.621354503673477
+                }
+              ],
+              "chosen_window": {
+                "label": "file_start",
+                "start_utc": "2019-02-01T00:10:00+00:00",
+                "train_rows": 506157,
+                "validation_mae": 6.621354503673477
+              },
+              "hyperparameter_search": [],
+              "chosen_hyperparameters": {},
+              "validation": {
+                "rows": 133051,
+                "mae": 6.621354503673477,
+                "rmse": 12.30423445103874,
+                "mase": 0.48545210049604687,
+                "total": {
+                  "mae": 146.798089846894,
+                  "rmse": 232.21529618349817,
+                  "mase": 0.11012196272113017,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.6002850017812611,
+                  "max_hosts_left_out": 3
+                }
+              }
+            },
+            "history_only": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_target_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 395741,
+                  "validation_mae": 7.181019995786377
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 410237,
+                  "validation_mae": 7.232745945146623
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 506157,
+                  "validation_mae": 6.310084053977816
+                }
+              ],
+              "chosen_window": {
+                "label": "file_start",
+                "start_utc": "2019-02-01T00:10:00+00:00",
+                "train_rows": 506157,
+                "validation_mae": 6.310084053977816
+              },
+              "hyperparameter_search": [],
+              "chosen_hyperparameters": {},
+              "validation": {
+                "rows": 133051,
+                "mae": 6.310084053977816,
+                "rmse": 12.095021810572335,
+                "mase": 0.39108797139380025,
+                "total": {
+                  "mae": 147.29131526549037,
+                  "rmse": 232.60411674485425,
+                  "mase": 0.11049196039083033,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.6002850017812611,
+                  "max_hosts_left_out": 3
+                }
+              }
+            }
+          },
+          "seasonal_naive": {
+            "history_only": {
+              "validation": {
+                "rows": 133051,
+                "mae": 21.539745998448304,
+                "rmse": 33.1040540744544,
+                "mase": 1.1010428861134678,
+                "total": {
+                  "mae": 629.5844587924133,
+                  "rmse": 805.6361498475598,
+                  "mase": 0.4722886815029494,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.6002850017812611,
+                  "max_hosts_left_out": 3
+                }
+              },
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_target_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id"
+              ]
+            }
+          }
+        },
+        "operational_choice": {
+          "model": "lightgbm",
+          "variant": "history_only",
+          "validation_mae": 6.044884807102055
+        },
+        "load_effect_percent_validation": {
+          "lightgbm": -0.2642956648251814,
+          "linear_regression": -4.932904966605629
+        },
+        "motivation_full_period": {
+          "train_end_utc": "2019-04-25T09:40:00+00:00",
+          "with_load": {
+            "rows": 133051,
+            "mae": 6.301401814133413,
+            "rmse": 12.256376643419427,
+            "mase": 0.34808865910773706,
+            "total": {
+              "mae": 123.27236340672488,
+              "rmse": 216.50611257573428,
+              "mase": 0.09247391857604743,
+              "instants": 2807,
+              "mean_hosts_left_out": 0.6002850017812611,
+              "max_hosts_left_out": 3
+            }
+          },
+          "history_only": {
+            "rows": 133051,
+            "mae": 6.553827724867884,
+            "rmse": 12.563386242129841,
+            "mase": 0.4009313176329365,
+            "total": {
+              "mae": 124.1850380797902,
+              "rmse": 218.1530589097662,
+              "mase": 0.09315857003458237,
+              "instants": 2807,
+              "mean_hosts_left_out": 0.6002850017812611,
+              "max_hosts_left_out": 3
+            }
+          }
+        }
+      },
+      "24h": {
+        "models": {
+          "lightgbm": {
+            "with_load": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_origin_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id",
+                "cpu_load",
+                "mem_pct",
+                "n_vms",
+                "cores",
+                "cores_used",
+                "net_rx",
+                "net_tx"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 388061,
+                  "validation_mae": 35.222650510148924
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 402543,
+                  "validation_mae": 41.88806806727165
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 491424,
+                  "validation_mae": 35.76438828734648
+                }
+              ],
+              "chosen_window": {
+                "label": "2019-03-15T00:00:00",
+                "start_utc": "2019-03-14T13:00:00+00:00",
+                "train_rows": 388061,
+                "validation_mae": 35.222650510148924
+              },
+              "hyperparameter_search": [
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 34.1238458887182
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 36.89110022530276
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 34.847557529206725
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 38.32775413885862
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 34.16700843263952
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 37.07420074528529
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 34.837640885102886
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 38.864860901049376
+                }
+              ],
+              "chosen_hyperparameters": {
+                "n_estimators": 200,
+                "num_leaves": 31,
+                "learning_rate": 0.05,
+                "min_child_samples": 20
+              },
+              "validation": {
+                "rows": 132490,
+                "mae": 34.1238458887182,
+                "rmse": 46.73398306664355,
+                "mase": 1.7707108681301982,
+                "total": {
+                  "mae": 690.7675261728122,
+                  "rmse": 902.5193450303165,
+                  "mase": 0.5181857328355368,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.8001425008906305,
+                  "max_hosts_left_out": 3
+                }
+              },
+              "interval_coverage_5_95": 0.7372858328930485
+            },
+            "history_only": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_origin_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 388061,
+                  "validation_mae": 38.71319848271831
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 402543,
+                  "validation_mae": 41.05495601733107
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 491424,
+                  "validation_mae": 33.82451251115075
+                }
+              ],
+              "chosen_window": {
+                "label": "file_start",
+                "start_utc": "2019-02-01T00:10:00+00:00",
+                "train_rows": 491424,
+                "validation_mae": 33.82451251115075
+              },
+              "hyperparameter_search": [
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 32.51524224911051
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 34.84554521447159
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 32.79442300790664
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 20
+                  },
+                  "validation_mae": 36.32416785551197
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 32.55292634847165
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 200,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 34.413077943113
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 31,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 32.7951080452693
+                },
+                {
+                  "hyperparameters": {
+                    "n_estimators": 500,
+                    "num_leaves": 127,
+                    "learning_rate": 0.05,
+                    "min_child_samples": 200
+                  },
+                  "validation_mae": 36.28195406474818
+                }
+              ],
+              "chosen_hyperparameters": {
+                "n_estimators": 200,
+                "num_leaves": 31,
+                "learning_rate": 0.05,
+                "min_child_samples": 20
+              },
+              "validation": {
+                "rows": 132490,
+                "mae": 32.51524224911051,
+                "rmse": 44.01757739581897,
+                "mase": 1.757358014062813,
+                "total": {
+                  "mae": 765.6560577045108,
+                  "rmse": 948.8132656572573,
+                  "mase": 0.5743640665330334,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.8001425008906305,
+                  "max_hosts_left_out": 3
+                }
+              },
+              "interval_coverage_5_95": 0.794920371348781
+            }
+          },
+          "linear_regression": {
+            "with_load": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_origin_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id",
+                "cpu_load",
+                "mem_pct",
+                "n_vms",
+                "cores",
+                "cores_used",
+                "net_rx",
+                "net_tx"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 388061,
+                  "validation_mae": 32.52393609357117
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 402543,
+                  "validation_mae": 39.54464317940087
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 491424,
+                  "validation_mae": 30.404689862937182
+                }
+              ],
+              "chosen_window": {
+                "label": "file_start",
+                "start_utc": "2019-02-01T00:10:00+00:00",
+                "train_rows": 491424,
+                "validation_mae": 30.404689862937182
+              },
+              "hyperparameter_search": [],
+              "chosen_hyperparameters": {},
+              "validation": {
+                "rows": 132490,
+                "mae": 30.404689862937182,
+                "rmse": 40.38673225968122,
+                "mase": 2.3098166132086124,
+                "total": {
+                  "mae": 739.8590429669462,
+                  "rmse": 912.0331519436716,
+                  "mase": 0.5550121941877636,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.8001425008906305,
+                  "max_hosts_left_out": 3
+                }
+              }
+            },
+            "history_only": {
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_origin_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id"
+              ],
+              "window_search": [
+                {
+                  "label": "2019-03-15T00:00:00",
+                  "start_utc": "2019-03-14T13:00:00+00:00",
+                  "train_rows": 388061,
+                  "validation_mae": 36.12796848277602
+                },
+                {
+                  "label": "2019-02-25T00:00:00",
+                  "start_utc": "2019-02-24T13:00:00+00:00",
+                  "train_rows": 402543,
+                  "validation_mae": 39.59735719041802
+                },
+                {
+                  "label": "file_start",
+                  "start_utc": "2019-02-01T00:10:00+00:00",
+                  "train_rows": 491424,
+                  "validation_mae": 26.950831531239558
+                }
+              ],
+              "chosen_window": {
+                "label": "file_start",
+                "start_utc": "2019-02-01T00:10:00+00:00",
+                "train_rows": 491424,
+                "validation_mae": 26.950831531239558
+              },
+              "hyperparameter_search": [],
+              "chosen_hyperparameters": {},
+              "validation": {
+                "rows": 132490,
+                "mae": 26.950831531239558,
+                "rmse": 36.54026347746539,
+                "mase": 1.8382175649700674,
+                "total": {
+                  "mae": 764.4436965951522,
+                  "rmse": 955.950454396436,
+                  "mase": 0.5734546024859972,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.8001425008906305,
+                  "max_hosts_left_out": 3
+                }
+              }
+            }
+          },
+          "seasonal_naive": {
+            "history_only": {
+              "validation": {
+                "rows": 132490,
+                "mae": 21.779377103138984,
+                "rmse": 33.732638285779466,
+                "mase": 1.1087129453707958,
+                "total": {
+                  "mae": 628.0006268285985,
+                  "rmse": 805.3968171232832,
+                  "mase": 0.4711005551134462,
+                  "instants": 2807,
+                  "mean_hosts_left_out": 0.8001425008906305,
+                  "max_hosts_left_out": 3
+                }
+              },
+              "columns": [
+                "power_lag_0",
+                "power_lag_1",
+                "power_lag_2",
+                "power_lag_3",
+                "power_lag_6",
+                "power_mean_1h",
+                "power_mean_6h",
+                "power_origin_minus_24h",
+                "target_hour",
+                "target_day_of_week",
+                "host_id"
+              ]
+            }
+          }
+        },
+        "operational_choice": {
+          "model": "seasonal_naive",
+          "variant": "history_only",
+          "validation_mae": 21.779377103138984
+        },
+        "load_effect_percent_validation": {
+          "lightgbm": -4.947229447911306,
+          "linear_regression": -12.815405445632164
+        },
+        "motivation_full_period": {
+          "train_end_utc": "2019-04-25T09:40:00+00:00",
+          "with_load": {
+            "rows": 132490,
+            "mae": 37.32245890080671,
+            "rmse": 52.36373396843418,
+            "mase": 1.8606893788320917,
+            "total": {
+              "mae": 854.6041787438785,
+              "rmse": 1028.4922200097526,
+              "mase": 0.6410893330499743,
+              "instants": 2807,
+              "mean_hosts_left_out": 0.8001425008906305,
+              "max_hosts_left_out": 3
+            }
+          },
+          "history_only": {
+            "rows": 132490,
+            "mae": 38.97821901114563,
+            "rmse": 51.81907387297962,
+            "mase": 2.1460919376260352,
+            "total": {
+              "mae": 951.9685562233612,
+              "rmse": 1130.4917466899642,
+              "mase": 0.7141281332029212,
+              "instants": 2807,
+              "mean_hosts_left_out": 0.8001425008906305,
+              "max_hosts_left_out": 3
+            }
+          }
+        }
+      }
+    }
+  }
+}
