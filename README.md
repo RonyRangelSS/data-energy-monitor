@@ -15,7 +15,7 @@ O sistema:
 
 Ilager, S. et al. (2023). *A Data-driven Analysis of a Cloud Data Center: Statistical Characterization of Workload, Energy and Temperature*. UCC '23. DOI [10.1145/3603166.3632137](https://doi.org/10.1145/3603166.3632137).
 
-Arquivos no Zenodo: DOI [10.5281/zenodo.10069402](https://doi.org/10.5281/zenodo.10069402), licença CC BY 4.0. O dataset **não** está neste repositório. Baixe `dataset1_combined.csv` (e, opcionalmente, `dataset2_combined.csv`) e coloque em `dados/brutos/`.
+Arquivos no Zenodo: DOI [10.5281/zenodo.10069402](https://doi.org/10.5281/zenodo.10069402), licença CC BY 4.0. O dataset **não** está neste repositório. Baixe `dataset1_combined.csv` (D1, principal) e `dataset2_combined.csv` (D2, replicação) e coloque em `data/raw/`.
 
 ## Requisitos
 
@@ -33,7 +33,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 uv sync
 
 # 3. Configurar variáveis de ambiente
-Copy-Item .env.exemplo .env
+Copy-Item .env.example .env
 # edite .env e troque senha e chave
 
 # 4. Subir os bancos de desenvolvimento (porta 5434) e de teste (porta 5435)
@@ -58,21 +58,21 @@ uv run pytest -m "not integration"   # só testes que não usam o banco
 uv sync --group notebook
 ```
 
-Abra `notebooks/analise_exploratoria_ilager.ipynb` no VS Code e selecione o kernel `.venv`.
+Abra `notebooks/ilager_exploratory_analysis.ipynb` no VS Code e selecione o kernel `.venv`.
 
 ## Estrutura
 
 ```
-src/energia_monitor/
-├── comum/         configuração, esquemas das leituras, preparação, variáveis
-├── modelos/       interface, registro, previsão, consumo esperado, detectores
-├── experimentos/  E1–E6
-├── banco/         modelos SQLAlchemy, sessão, repositórios
+src/energy_monitor/
+├── common/        configuração, esquemas das leituras, preparação, variáveis
+├── models/        interface, registro, previsão, consumo esperado, detectores
+├── experiments/   E1–E6
+├── database/     modelos SQLAlchemy, sessão, repositórios
 ├── api/           rotas e serviços (FastAPI)
-├── reprodutor/    leitura do dataset, envio, injeção de anomalias
-└── painel/        Streamlit
+├── replayer/      leitura do dataset, envio, injeção de anomalias
+└── dashboard/    Streamlit
 alembic/           migrações do banco
-artefatos/         modelos treinados (fora do git) e resultados de experimentos
+artifacts/         modelos treinados (fora do git) e resultados de experimentos
 notebooks/         exploração inicial
 tests/             unit/, integration/, system/
 ```

@@ -1,4 +1,4 @@
-"""base inicial
+"""initial base
 
 Revision ID: 0001
 Revises:

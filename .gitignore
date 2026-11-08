@@ -7,16 +7,16 @@ docs/
 .env
 
 # Dados (dataset referenciado, não incluído — DP24)
-dados/brutos/*
-dados/processados/*
-!dados/**/.gitkeep
+data/raw/*
+data/processed/*
+!data/**/.gitkeep
 
 # Modelos treinados (métricas de experimentos são versionadas)
-artefatos/modelos/*
-!artefatos/modelos/.gitkeep
+artifacts/models/*
+!artifacts/models/.gitkeep
 
 # Saídas do notebook exploratório
-notebooks/saida/
+notebooks/output/
 .ipynb_checkpoints/
 
 # Python

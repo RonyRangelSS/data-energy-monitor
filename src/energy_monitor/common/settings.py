@@ -4,17 +4,17 @@ from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Configuracao(BaseSettings):
+class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     database_url: str
-    database_url_teste: str | None = None
+    test_database_url: str | None = None
     api_key: SecretStr
-    tarifa_kwh: float = Field(default=0.80, gt=0)
-    fuso_exibicao: str = "Australia/Melbourne"
+    tariff_kwh: float = Field(default=0.80, gt=0)
+    display_timezone: str = "Australia/Melbourne"
     log_level: str = "INFO"
 
 
 @lru_cache
-def obter_configuracao() -> Configuracao:
-    return Configuracao()
+def get_settings() -> Settings:
+    return Settings()
