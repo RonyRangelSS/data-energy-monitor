@@ -72,5 +72,6 @@ source = ["energy_monitor"]
 branch = true
 
 [tool.coverage.report]
+fail_under = 70
 show_missing = true
 skip_empty = true

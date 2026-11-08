@@ -1,0 +1,11 @@
+experiment: e1_data_quality
+source_timezone: Australia/Melbourne
+analysis_start_local: "2019-03-15T00:00:00"
+train_fraction: 0.6
+validation_fraction: 0.2
+min_host_coverage: 0.8
+processed_dir: data/processed
+output_dir: artifacts/experiments
+datasets:
+  d1: data/raw/dataset1_combined.csv
+  d2: data/raw/dataset2_combined.csv
