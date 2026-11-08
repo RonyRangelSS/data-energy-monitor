@@ -3,6 +3,7 @@ import gc
 import json
 from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Final
 
@@ -52,6 +53,11 @@ class DatasetContext:
     boundaries: SplitBoundaries
     hosts: list[str]
     scale: SeasonalScale
+
+
+def report_progress(stage: str, dataset: str, horizon: object, model: str, variant: str) -> None:
+    moment = datetime.now().strftime("%H:%M:%S")
+    print(f"[{moment}] {stage} {dataset} {horizon} {model} {variant}", flush=True)
 
 
 def load_config(path: Path) -> dict[str, Any]:
@@ -201,6 +207,8 @@ def select_variant(
     context: DatasetContext,
     config: dict[str, Any],
 ) -> dict[str, Any]:
+    variant = WITH_LOAD if with_load else HISTORY_ONLY
+    report_progress("selection", context.name, horizon_steps, model_name, variant)
     columns = feature_columns(horizon_steps, with_load)
     model_class = forecast_registry.get(model_name)
     boundaries = context.boundaries
@@ -375,6 +383,7 @@ def evaluate_final_variant(
     context: DatasetContext,
     config: dict[str, Any],
 ) -> dict[str, Any]:
+    report_progress("final", context.name, label, model_name, variant)
     model_class = forecast_registry.get(model_name)
     boundaries = context.boundaries
     test = evaluation_rows(frame, boundaries.validation_end, boundaries.end + GRID_STEP)

@@ -204,7 +204,9 @@ def test_freeze_requires_existing_selection(tmp_path: Path) -> None:
         freeze_protocol([tmp_path / "missing.json"], tmp_path / "freeze.json")
 
 
-def test_command_runs_selection_for_one_dataset(tmp_path: Path) -> None:
+def test_command_runs_selection_for_one_dataset(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     config = build_workspace(tmp_path)
     config_path = tmp_path / "config.yaml"
     config_path.write_text(yaml.safe_dump(config), encoding="utf-8")
@@ -212,3 +214,4 @@ def test_command_runs_selection_for_one_dataset(tmp_path: Path) -> None:
     main(["--stage", "selection", "--config", str(config_path), "--dataset", "d1"])
 
     assert (tmp_path / "artifacts/e5_forecasting_selection_d1.json").exists()
+    assert "selection d1 6 lightgbm with_load" in capsys.readouterr().out
