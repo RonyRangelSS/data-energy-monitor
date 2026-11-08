@@ -9,7 +9,7 @@ O sistema:
 3. exibe tudo em painéis em tempo quase real sobre reprodução acelerada de um dataset histórico real;
 4. registra experimentos reproduzíveis que comparam os modelos com baselines.
 
-> Status: Fase 0 (fundação) concluída. Próxima: Fase 1 (preparação dos dados).
+> Status: Fases 0 (fundação) e 1 (dados) concluídas. Próxima: Fase 2 (previsão offline).
 
 ## Dados
 
@@ -42,6 +42,14 @@ docker compose up -d
 # 5. Aplicar as migrações no banco de desenvolvimento
 uv run alembic upgrade head
 ```
+
+## Preparação dos dados e experimento E1
+
+```powershell
+uv run python -m energy_monitor.experiments.e1_data_quality
+```
+
+O comando lê `configs/e1_data_quality.yaml` e, para o D1 e o D2, gera a grade de 10 min em `data/processed/` e o relatório de qualidade em `artifacts/experiments/`. O relatório registra a configuração, o commit, as versões dos pacotes e o hash do arquivo de dados.
 
 ## Testes e lint
 
