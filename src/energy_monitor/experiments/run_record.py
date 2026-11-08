@@ -8,6 +8,7 @@ from typing import Any
 
 TRACKED_PACKAGES = ("numpy", "pandas", "pyarrow", "scikit-learn", "lightgbm")
 HASH_CHUNK_BYTES = 8 * 1024 * 1024
+GENERATED_REPORTS_PATHSPEC = ":(exclude)artifacts/experiments"
 
 
 def hash_file(path: Path) -> str:
@@ -29,7 +30,7 @@ def run_git(*arguments: str) -> str | None:
 
 
 def describe_code_version() -> dict[str, Any]:
-    status = run_git("status", "--porcelain")
+    status = run_git("status", "--porcelain", "--", ".", GENERATED_REPORTS_PATHSPEC)
     return {
         "commit": run_git("rev-parse", "HEAD"),
         "has_uncommitted_changes": bool(status) if status is not None else None,
