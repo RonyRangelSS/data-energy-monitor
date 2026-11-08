@@ -1,0 +1,31 @@
+experiment: e5_forecasting
+seed: 42
+source_timezone: Australia/Melbourne
+train_fraction: 0.6
+validation_fraction: 0.2
+processed_dir: data/processed
+e1_report_dir: artifacts/experiments
+output_dir: artifacts/experiments
+models_dir: artifacts/models
+datasets:
+  d1: data/raw/dataset1_combined.csv
+  d2: data/raw/dataset2_combined.csv
+horizons:
+  1h: 6
+  24h: 144
+training_start_candidates_local:
+  - "2019-03-15T00:00:00"
+  - "2019-02-25T00:00:00"
+  - null
+motivation_full_period: true
+default_hyperparameters:
+  lightgbm:
+    n_estimators: 300
+    num_leaves: 63
+    learning_rate: 0.05
+    min_child_samples: 20
+hyperparameter_grid:
+  lightgbm:
+    n_estimators: [200, 500]
+    num_leaves: [31, 127]
+    min_child_samples: [20, 200]
