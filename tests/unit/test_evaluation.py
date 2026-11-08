@@ -45,6 +45,16 @@ def test_interval_coverage_counts_bounds_as_inside() -> None:
     assert interval_coverage(actual, np.full(4, 1.0), np.full(4, 9.0)) == pytest.approx(0.75)
 
 
+def test_median_mase_is_not_dominated_by_almost_constant_host() -> None:
+    predictions = predictions_for(["h1", "h2", "h3"], [0, 0, 0], [10.0] * 3, [9.0, 8.0, 7.0])
+    scale = SeasonalScale(per_host=pd.Series({"h1": 1.0, "h2": 2.0, "h3": 0.01}), total=5.0)
+
+    result = evaluate_forecast(predictions, scale, eligible_hosts=3)
+
+    assert result["mase"] == pytest.approx((1 + 1 + 300) / 3)
+    assert result["mase_median"] == pytest.approx(1.0)
+
+
 def test_evaluate_forecast_averages_mase_across_hosts() -> None:
     predictions = predictions_for(
         ["h1", "h1", "h2", "h2"], [0, 1, 0, 1], [10.0, 10.0, 100.0, 100.0], [8.0, 12.0, 95.0, 105.0]

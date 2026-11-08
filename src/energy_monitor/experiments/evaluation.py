@@ -91,6 +91,7 @@ def evaluate_forecast(
         "mae": mean_absolute_error(actual, forecast),
         "rmse": root_mean_squared_error(actual, forecast),
         "mase": float(hosts["mase"].mean()),
+        "mase_median": float(hosts["mase"].median()),
         "total": summarize_total(predictions, scale.total, eligible_hosts),
     }
     if include_details:
