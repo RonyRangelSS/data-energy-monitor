@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     tariff_kwh: float = Field(default=0.80, gt=0)
     display_timezone: str = "Australia/Melbourne"
     log_level: str = "INFO"
+    models_dir: str = "artifacts/models"
+    experiments_dir: str = "artifacts/experiments"
+    operational_dataset: str = "d1"
+    api_url: str = "http://localhost:8000"
 
 
 @lru_cache
