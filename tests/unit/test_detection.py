@@ -159,3 +159,32 @@ def test_extract_episodes_summarizes_each_run() -> None:
     assert episodes[0].unexplained_energy_kwh == pytest.approx(4 * 30 * (10 / 60) / 1000)
     assert episodes[0].justification.startswith("potência 40% acima do esperado")
     assert episodes[0].to_dict()["start"] == rows["ts"].iloc[2].isoformat()
+
+
+def test_fast_hysteresis_matches_step_by_step_reference() -> None:
+    generator = np.random.default_rng(11)
+    groups = np.repeat(np.array(["a", "b", "c"]), 200)
+    scores = generator.normal(3, 1.5, len(groups))
+    opening, closing = scores >= 3.5, scores < 2.5
+
+    reference = []
+    state, previous = HysteresisState(), None
+    for group, opens, closes in zip(groups, opening, closing, strict=True):
+        if group != previous:
+            state, previous = HysteresisState(), group
+        state = step(state, bool(opens), bool(closes), 2)
+        reference.append(state.active)
+
+    assert apply_hysteresis(groups, opening, closing, 2).tolist() == reference
+
+
+def test_episode_summary_ignores_missing_expected_values() -> None:
+    rows = deviation_rows().head(4)
+    rows["expected"] = [100.0, np.nan, 100.0, 100.0]
+    rows["upper"] = [110.0, np.nan, 110.0, 110.0]
+    rows["power"] = 150.0
+
+    episode = extract_episodes(rows, np.ones(4, dtype=bool), np.ones(4))[0]
+
+    assert episode.justification.startswith("potência 50% acima do esperado")
+    assert episode.unexplained_energy_kwh == pytest.approx(3 * 40 * (10 / 60) / 1000)

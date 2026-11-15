@@ -107,16 +107,25 @@ def plan_events(hosts: Sequence[str], plan: InjectionPlan) -> list[InjectedEvent
     return sorted(events, key=lambda event: (event.host_id, event.start))
 
 
-def event_mask(frame: pd.DataFrame, event: InjectedEvent) -> np.ndarray:
-    return (
-        frame["host_id"].astype(str).eq(event.host_id).to_numpy()
-        & (frame["ts"] >= event.start).to_numpy()
-        & (frame["ts"] <= event.end).to_numpy()
-    )
+def host_values(frame: pd.DataFrame) -> np.ndarray:
+    return frame["host_id"].astype(str).to_numpy()
 
 
-def apply_event(frame: pd.DataFrame, event: InjectedEvent, reference: HostReference) -> None:
-    rows = np.flatnonzero(event_mask(frame, event))
+def event_mask(
+    frame: pd.DataFrame, event: InjectedEvent, hosts: np.ndarray | None = None
+) -> np.ndarray:
+    hosts = host_values(frame) if hosts is None else hosts
+    within = (frame["ts"] >= event.start) & (frame["ts"] <= event.end)
+    return (hosts == event.host_id) & within.to_numpy()
+
+
+def apply_event(
+    frame: pd.DataFrame,
+    event: InjectedEvent,
+    reference: HostReference,
+    hosts: np.ndarray | None = None,
+) -> None:
+    rows = np.flatnonzero(event_mask(frame, event, hosts))
     if len(rows) == 0:
         return
     power = frame.columns.get_loc("power")
@@ -144,15 +153,17 @@ def apply_events(
     frame: pd.DataFrame, events: Sequence[InjectedEvent], reference: HostReference
 ) -> pd.DataFrame:
     injected = frame.copy()
+    hosts = host_values(injected)
     for event in events:
-        apply_event(injected, event, reference)
+        apply_event(injected, event, reference, hosts)
     return injected
 
 
 def label_rows(frame: pd.DataFrame, events: Sequence[InjectedEvent]) -> np.ndarray:
     labels = np.zeros(len(frame), dtype=bool)
+    hosts = host_values(frame)
     for event in events:
-        labels |= event_mask(frame, event)
+        labels |= event_mask(frame, event, hosts)
     return labels
 
 

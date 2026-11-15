@@ -26,11 +26,18 @@ def apply_hysteresis(
     groups: np.ndarray, opening: np.ndarray, closing: np.ndarray, consecutive: int
 ) -> np.ndarray:
     active = np.zeros(len(groups), dtype=bool)
-    state = HysteresisState()
-    previous = None
+    opening_flags, closing_flags = opening.tolist(), closing.tolist()
+    is_active, above, below, previous = False, 0, 0, None
     for position, group in enumerate(groups.tolist()):
         if group != previous:
-            state, previous = HysteresisState(), group
-        state = step(state, bool(opening[position]), bool(closing[position]), consecutive)
-        active[position] = state.active
+            is_active, above, below, previous = False, 0, 0, group
+        if is_active:
+            below = below + 1 if closing_flags[position] else 0
+            if below >= consecutive:
+                is_active, above, below = False, 0, 0
+        else:
+            above = above + 1 if opening_flags[position] else 0
+            if above >= consecutive:
+                is_active, above, below = True, 0, 0
+        active[position] = is_active
     return active

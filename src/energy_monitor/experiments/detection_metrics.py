@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from energy_monitor.models.detection.alerts import run_boundaries
-from energy_monitor.replayer.injection import InjectedEvent, event_mask, label_rows
+from energy_monitor.replayer.injection import InjectedEvent, event_mask, host_values, label_rows
 
 
 def harmonic_mean(first: float, second: float) -> float:
@@ -29,9 +29,12 @@ def run_touches_event(run: tuple[str, pd.Timestamp, pd.Timestamp], event: Inject
 
 
 def event_detection(
-    frame: pd.DataFrame, active: np.ndarray, event: InjectedEvent
+    frame: pd.DataFrame,
+    active: np.ndarray,
+    event: InjectedEvent,
+    hosts: np.ndarray | None = None,
 ) -> tuple[bool, float | None]:
-    rows = event_mask(frame, event)
+    rows = event_mask(frame, event, hosts)
     alerted = rows & active
     if not alerted.any():
         return False, None
@@ -54,7 +57,8 @@ def evaluate_detection(
     frame: pd.DataFrame, active: np.ndarray, events: Sequence[InjectedEvent]
 ) -> dict[str, Any]:
     runs = alert_runs(frame, active)
-    outcomes = [event_detection(frame, active, event) for event in events]
+    hosts = host_values(frame)
+    outcomes = [event_detection(frame, active, event, hosts) for event in events]
     detected = sum(found for found, _ in outcomes)
     delays = [delay for found, delay in outcomes if found]
     true_runs = sum(any(run_touches_event(run, event) for event in events) for run in runs)
@@ -76,7 +80,8 @@ def evaluate_detection(
 def evaluate_negative_control(
     frame: pd.DataFrame, active: np.ndarray, peaks: Sequence[InjectedEvent]
 ) -> dict[str, Any]:
-    alerted = [event_detection(frame, active, peak)[0] for peak in peaks]
+    hosts = host_values(frame)
+    alerted = [event_detection(frame, active, peak, hosts)[0] for peak in peaks]
     runs = alert_runs(frame, active)
     return {
         "legit_peaks": len(peaks),

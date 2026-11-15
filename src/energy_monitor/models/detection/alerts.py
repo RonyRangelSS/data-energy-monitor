@@ -29,7 +29,7 @@ class AlertEpisode:
 
 def unexplained_energy_kwh(power: np.ndarray, upper: np.ndarray) -> float:
     excess = np.clip(power - upper, 0, None)
-    return float(excess.sum() * HOURS_PER_READING / WATTS_PER_KILOWATT)
+    return float(np.nansum(excess) * HOURS_PER_READING / WATTS_PER_KILOWATT)
 
 
 def describe_episode(excess_percent: float, cpu_percent: float, minutes: int) -> str:
@@ -48,7 +48,7 @@ def run_boundaries(groups: np.ndarray, active: np.ndarray) -> list[tuple[int, in
 def summarize_episode(rows: pd.DataFrame, scores: np.ndarray) -> AlertEpisode:
     power = rows["power"].to_numpy(np.float64)
     expected = rows["expected"].to_numpy(np.float64)
-    excess = float(np.mean((power - expected) / expected) * 100)
+    excess = float(np.nanmean((power - expected) / expected) * 100)
     minutes = int(len(rows) * GRID_STEP / pd.Timedelta(minutes=1))
     return AlertEpisode(
         host_id=str(rows["host_id"].iloc[0]),
