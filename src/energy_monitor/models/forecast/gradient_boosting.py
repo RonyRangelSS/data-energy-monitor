@@ -41,6 +41,9 @@ class LightGBMForecaster(ForecastModel):
     def predict(self, frame: pd.DataFrame) -> np.ndarray:
         return self._point.predict(frame[self.feature_columns])
 
+    def has_interval(self) -> bool:
+        return self._lower is not None and self._upper is not None
+
     def predict_interval(self, frame: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
         if self._lower is None or self._upper is None:
             raise ValueError("Modelo treinado sem with_interval=True")
