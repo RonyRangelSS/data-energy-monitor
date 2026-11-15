@@ -1,0 +1,52 @@
+{
+  "experiment": "e6_system",
+  "created_at": "2026-11-15T23:27:55.484822+00:00",
+  "configuration": {
+    "experiment": "e6_system",
+    "seed": 42,
+    "dataset": "d1",
+    "data_file": "data/raw/dataset1_combined.csv",
+    "processed_dir": "data/processed",
+    "e1_report_dir": "artifacts/experiments",
+    "output_dir": "artifacts/experiments",
+    "scenario_prefix": "e6",
+    "warmup_readings": 144,
+    "window_readings": 36,
+    "speeds": [
+      60,
+      600,
+      6000
+    ],
+    "reference_speed": 600,
+    "query_days": 7,
+    "query_requests": 1000
+  },
+  "seed": 42,
+  "code_version": {
+    "commit": "50d712a991c3fb283e23e4f92e0688c8b6764daa",
+    "has_uncommitted_changes": false
+  },
+  "package_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "data_file": "dataset1_combined.csv",
+  "data_sha256": "18592c5a1a9edf021cb16e5775cd12bfb1479d244c10e4d913bf18cefe7b0256",
+  "metrics": {
+    "dataset": "d1",
+    "loaded_readings": 76608,
+    "period_utc": [
+      "2019-05-31T12:20:00+00:00",
+      "2019-06-07T12:20:00+00:00"
+    ],
+    "requests": 1000,
+    "points_per_response": 1008,
+    "latency_ms_p50": 27.43960003135726,
+    "latency_ms_p95": 39.64569001691415,
+    "latency_ms_max": 499.6705999947153,
+    "rnf03_p95_below_1s": true
+  }
+}
