@@ -1,0 +1,11 @@
+{
+  "frozen_at": "2026-11-15T22:21:36.517116+00:00",
+  "code_version": {
+    "commit": "f33581c939a5c920ec59e9ac1098cc3d080ae511",
+    "has_uncommitted_changes": false
+  },
+  "selection_sha256": {
+    "e2_expected_consumption_selection_d1.json": "961b2e3d2ac0c66b2ed8db93a283d51b998270dccae6d393fa966a6cc8d5d58c",
+    "e3_detection_selection_d1.json": "ec3fbc2eb438a3f0558ecf739d8c12c2944a0622d05b708ffd89fa421569ffaf"
+  }
+}
