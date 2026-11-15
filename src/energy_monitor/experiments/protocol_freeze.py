@@ -44,13 +44,15 @@ def require_frozen_protocol(selection_paths: Sequence[Path], freeze_path: Path) 
 
 def selection_paths_for(config: dict[str, Any]) -> list[Path]:
     output_dir = Path(config["output_dir"])
+    if "selection_files" in config:
+        return [output_dir / name for name in config["selection_files"]]
     return [
         output_dir / f"{config['experiment']}_selection_{name}.json" for name in config["datasets"]
     ]
 
 
 def freeze_path_for(config: dict[str, Any]) -> Path:
-    return Path(config["output_dir"]) / FREEZE_FILE_NAME
+    return Path(config["output_dir"]) / config.get("freeze_file", FREEZE_FILE_NAME)
 
 
 def main(arguments: Sequence[str] | None = None) -> None:

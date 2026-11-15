@@ -19,6 +19,11 @@ from energy_monitor.common.features import (
 )
 from energy_monitor.common.schema import GRID_STEP
 from energy_monitor.common.splitting import SplitBoundaries, compute_boundaries, local_to_utc
+from energy_monitor.experiments.context import (
+    boundaries_from_report,
+    load_grid,
+    read_quality_report,
+)
 from energy_monitor.experiments.evaluation import (
     SeasonalScale,
     build_predictions,
@@ -65,29 +70,12 @@ def load_config(path: Path) -> dict[str, Any]:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
-def read_quality_report(name: str, config: dict[str, Any]) -> dict[str, Any]:
-    path = Path(config["e1_report_dir"]) / f"e1_data_quality_{name}.json"
-    return json.loads(path.read_text(encoding="utf-8"))["metrics"]
-
-
-def boundaries_from_report(report: dict[str, Any]) -> SplitBoundaries:
-    moments = {name: pd.Timestamp(values["utc"]) for name, values in report["split"].items()}
-    return SplitBoundaries(
-        start=moments["start"],
-        train_end=moments["train_end"],
-        validation_end=moments["validation_end"],
-        end=moments["end"],
-    )
-
-
 def load_context(name: str, config: dict[str, Any], stop_at_validation_end: bool) -> DatasetContext:
     report = read_quality_report(name, config)
     boundaries = boundaries_from_report(report)
     hosts = report["coverage"]["eligible_hosts"]
-    grid_path = Path(config["processed_dir"]) / f"{name}_grid.parquet"
-    grid = pd.read_parquet(grid_path, columns=list(GRID_COLUMNS))
-    if stop_at_validation_end:
-        grid = grid[grid["ts"] < boundaries.validation_end].reset_index(drop=True)
+    before = boundaries.validation_end if stop_at_validation_end else None
+    grid = load_grid(name, config, GRID_COLUMNS, before)
     per_host, total = compute_seasonal_scale(grid, hosts, boundaries.start, boundaries.train_end)
     scale = SeasonalScale(per_host=per_host, total=total)
     return DatasetContext(name, grid, boundaries, hosts, scale)
