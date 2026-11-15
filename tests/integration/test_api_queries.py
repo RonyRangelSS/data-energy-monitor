@@ -124,3 +124,15 @@ def test_e6_speed_run_measures_latency_and_losses(
     assert summary["lost_readings_percent"] == 0
     assert summary["resend_duplicates"] == 2
     assert summary["latency_ms_p95"] > 0
+
+
+def test_series_query_benchmark_reports_percentiles(loaded_client: TestClient) -> None:
+    start = training_grid()["ts"].min()
+
+    result = e6_system.measure_series_queries(
+        loaded_client, "demo", "h1", start, start + 200 * STEP, requests=5
+    )
+
+    assert result["requests"] == 5
+    assert result["points_per_response"] == 152
+    assert result["latency_ms_p95"] >= result["latency_ms_p50"] > 0

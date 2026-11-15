@@ -10,3 +10,5 @@ warmup_readings: 144
 window_readings: 36
 speeds: [60, 600, 6000]
 reference_speed: 600
+query_days: 7
+query_requests: 1000

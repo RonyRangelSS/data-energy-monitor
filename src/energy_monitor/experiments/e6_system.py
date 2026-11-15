@@ -1,9 +1,11 @@
 import argparse
+import time
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, Final
 
 import httpx
+import numpy as np
 import pandas as pd
 import yaml
 from sqlalchemy import func, select
@@ -69,6 +71,64 @@ def run_speed(
     return summary
 
 
+def measure_series_queries(
+    client: httpx.Client,
+    scenario: str,
+    host_id: str,
+    start: pd.Timestamp,
+    end: pd.Timestamp,
+    requests: int,
+    clock: Any = time.perf_counter,
+) -> dict[str, Any]:
+    parameters = {"scenario": scenario, "start": start.isoformat(), "end": end.isoformat()}
+    latencies, points = [], 0
+    for _ in range(requests):
+        began = clock()
+        response = client.get(f"/servers/{host_id}/series", params=parameters)
+        latencies.append((clock() - began) * 1000)
+        response.raise_for_status()
+        points = len(response.json())
+    values = np.array(latencies)
+    return {
+        "requests": requests,
+        "points_per_response": points,
+        "latency_ms_p50": float(np.percentile(values, 50)),
+        "latency_ms_p95": float(np.percentile(values, 95)),
+        "latency_ms_max": float(values.max()),
+        "rnf03_p95_below_1s": bool(np.percentile(values, 95) < 1000),
+    }
+
+
+def run_query_benchmark(config: dict[str, Any]) -> Path:
+    settings = get_settings()
+    name = config["dataset"]
+    report = read_quality_report(name, config)
+    boundaries = boundaries_from_report(report)
+    hosts = report["coverage"]["eligible_hosts"]
+    grid_path = Path(config["processed_dir"]) / f"{name}_grid.parquet"
+    start = boundaries.validation_end
+    end = start + pd.Timedelta(days=int(config["query_days"]))
+    scenario = f"{config['scenario_prefix']}_queries"
+    headers = {"X-API-Key": settings.api_key.get_secret_value()}
+    with httpx.Client(base_url=settings.api_url, headers=headers, timeout=120) as client:
+        client.delete(f"/scenarios/{scenario}")
+        loaded = replay(load_period(grid_path, hosts, start, end), client, scenario, None)
+        metrics = {
+            "dataset": name,
+            "loaded_readings": loaded.accepted,
+            "period_utc": [start.isoformat(), end.isoformat()],
+            **measure_series_queries(
+                client, scenario, hosts[0], start, end, int(config["query_requests"])
+            ),
+        }
+    record = build_run_record(
+        EXPERIMENT_NAME, config, Path(config["data_file"]), config["seed"], metrics
+    )
+    path = Path(config["output_dir"]) / f"{EXPERIMENT_NAME}_queries_{name}.json"
+    write_json(record, path)
+    return path
+
+
 def run(config: dict[str, Any]) -> Path:
     settings = get_settings()
     name = config["dataset"]
@@ -117,7 +177,10 @@ def run(config: dict[str, Any]) -> Path:
 def main(arguments: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="E6: latência, vazão e perdas do sistema")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
-    print(f"Relatório gravado em {run(load_config(parser.parse_args(arguments).config))}")
+    parser.add_argument("--queries", action="store_true", help="Mede só as consultas (RNF03)")
+    parsed = parser.parse_args(arguments)
+    runner = run_query_benchmark if parsed.queries else run
+    print(f"Relatório gravado em {runner(load_config(parsed.config))}")
 
 
 if __name__ == "__main__":
