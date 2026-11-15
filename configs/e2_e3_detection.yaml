@@ -1,0 +1,58 @@
+experiment: e2_e3
+seed: 42
+source_timezone: Australia/Melbourne
+processed_dir: data/processed
+e1_report_dir: artifacts/experiments
+output_dir: artifacts/experiments
+models_dir: artifacts/models
+datasets:
+  d1: data/raw/dataset1_combined.csv
+freeze_file: protocol_freeze_e2_e3.json
+selection_files:
+  - e2_expected_consumption_selection_d1.json
+  - e3_detection_selection_d1.json
+training_start_candidates_local:
+  - "2019-03-15T00:00:00"
+  - "2019-02-25T00:00:00"
+  - null
+statistics_start_local: "2019-03-15T00:00:00"
+out_of_fold_blocks: 5
+operational_expected_model: lightgbm_quantile
+default_hyperparameters:
+  lightgbm_quantile:
+    n_estimators: 300
+    num_leaves: 63
+    learning_rate: 0.05
+    min_child_samples: 20
+hyperparameter_grid:
+  lightgbm_quantile:
+    num_leaves: [31, 127]
+    min_child_samples: [20, 200]
+detection:
+  consecutive: 2
+  events_per_seed: 50
+  magnitudes: [0.1, 0.2, 0.4]
+  durations_slots: [3, 12, 36]
+  validation_seeds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+  test_seeds: [201, 202, 203, 204, 205, 206, 207, 208, 209, 210]
+  tuning_kinds: [offset, drift, stuck, zero_load_high_power]
+  families:
+    e3b_legit_peaks: [legit_peak]
+    e3c_excess_without_load: [offset, drift, stuck]
+    e3d_high_power_zero_load: [zero_load_high_power]
+  grids:
+    deviation:
+      - {open_threshold: 2.5, close_threshold: 1.5}
+      - {open_threshold: 3.0, close_threshold: 2.0}
+      - {open_threshold: 3.5, close_threshold: 2.5}
+      - {open_threshold: 4.0, close_threshold: 3.0}
+      - {open_threshold: 5.0, close_threshold: 4.0}
+    fixed_threshold:
+      - {percentile: 90.0}
+      - {percentile: 95.0}
+      - {percentile: 99.0}
+    isolation_forest:
+      - {percentile: 95.0}
+      - {percentile: 99.0}
+      - {percentile: 99.5}
+  top_episodes: 20
