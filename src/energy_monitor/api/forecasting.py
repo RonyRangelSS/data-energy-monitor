@@ -52,12 +52,14 @@ def host_records(
     rows: pd.DataFrame,
 ) -> list[dict]:
     target = (origin + spec.steps * GRID_STEP).to_pydatetime()
-    prediction = dict(zip(rows["host_id"].astype(str), spec.model.predict(rows), strict=True))
-    lower, upper = {}, {}
-    if spec.model.has_interval() and len(rows):
-        low, high = spec.model.predict_interval(rows)
-        lower = dict(zip(rows["host_id"].astype(str), low, strict=True))
-        upper = dict(zip(rows["host_id"].astype(str), high, strict=True))
+    prediction, lower, upper = {}, {}, {}
+    if len(rows):
+        names = rows["host_id"].astype(str).tolist()
+        prediction = dict(zip(names, spec.model.predict(rows), strict=True))
+        if spec.model.has_interval():
+            low, high = spec.model.predict_interval(rows)
+            lower = dict(zip(names, low, strict=True))
+            upper = dict(zip(names, high, strict=True))
     base = {
         "scenario": scenario,
         "horizon": spec.horizon,
