@@ -47,20 +47,27 @@ def select_valid_readings(grid: pd.DataFrame, hosts: Sequence[str]) -> pd.DataFr
     return frame[["host_id", "ts", *measurements]]
 
 
+def grouped_rolling(
+    values: pd.Series, hosts: pd.Series, window: int, minimum: int, statistic: str
+) -> pd.Series:
+    rolling = values.groupby(hosts, sort=False).rolling(window, min_periods=minimum)
+    return getattr(rolling, statistic)().reset_index(level=0, drop=True).reindex(values.index)
+
+
 def add_power_history(frame: pd.DataFrame, horizon_steps: int) -> pd.DataFrame:
+    hosts = frame["host_id"]
     power = frame.groupby("host_id", sort=False)["power"]
     new_columns = {lag_column(step): power.shift(step) for step in LAG_STEPS}
-    new_columns["power_mean_1h"] = power.transform(
-        lambda series: series.rolling(MEAN_1H_STEPS, min_periods=MEAN_1H_STEPS // 2).mean()
+    new_columns["power_mean_1h"] = grouped_rolling(
+        frame["power"], hosts, MEAN_1H_STEPS, MEAN_1H_STEPS // 2, "mean"
     )
-    new_columns["power_mean_6h"] = power.transform(
-        lambda series: series.rolling(MEAN_6H_STEPS, min_periods=MEAN_6H_STEPS // 2).mean()
+    new_columns["power_mean_6h"] = grouped_rolling(
+        frame["power"], hosts, MEAN_6H_STEPS, MEAN_6H_STEPS // 2, "mean"
     )
     new_columns[SEASONAL_REFERENCE] = power.shift(STEPS_PER_DAY - horizon_steps)
     new_columns[ORIGIN_MINUS_24H] = power.shift(STEPS_PER_DAY)
-    new_columns["readings_last_24h"] = power.transform(
-        lambda series: series.notna().rolling(STEPS_PER_DAY, min_periods=1).sum()
-    )
+    observed = frame["power"].notna().astype(np.float64)
+    new_columns["readings_last_24h"] = grouped_rolling(observed, hosts, STEPS_PER_DAY, 1, "sum")
     new_columns["target"] = power.shift(-horizon_steps)
     return frame.assign(**new_columns)
 

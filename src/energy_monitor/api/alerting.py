@@ -22,12 +22,20 @@ class AlertUpdate:
     closed: int = 0
 
 
-def load_state(session: Session, scenario: str, host_id: str) -> AlertState:
-    state = session.get(AlertState, (scenario, host_id), with_for_update=True)
-    if state is None:
-        state = AlertState(scenario=scenario, host_id=host_id, active=False, above=0, below=0)
-        session.add(state)
-    return state
+def load_states(session: Session, scenario: str, hosts: list[str]) -> dict[str, AlertState]:
+    statement = (
+        select(AlertState)
+        .where(AlertState.scenario == scenario, AlertState.host_id.in_(hosts))
+        .with_for_update()
+    )
+    states = {state.host_id: state for state in session.scalars(statement)}
+    for host_id in hosts:
+        if host_id not in states:
+            states[host_id] = AlertState(
+                scenario=scenario, host_id=host_id, active=False, above=0, below=0
+            )
+            session.add(states[host_id])
+    return states
 
 
 def episode_rows(session: Session, alert: Alert) -> pd.DataFrame:
@@ -143,8 +151,10 @@ def update_alerts(
     update = AlertUpdate()
     if inserted.empty:
         return update
-    for host_id, rows in inserted.sort_values(["host_id", "ts"]).groupby("host_id", sort=True):
-        state = load_state(session, scenario, str(host_id))
+    ordered = inserted.sort_values(["host_id", "ts"])
+    states = load_states(session, scenario, sorted(ordered["host_id"].astype(str).unique()))
+    for host_id, rows in ordered.groupby("host_id", sort=True):
+        state = states[str(host_id)]
         for _, row in rows.iterrows():
             process_reading(session, models, scenario, state, row, update)
     return update

@@ -112,11 +112,11 @@ def insert_readings(
     records = [to_record(row, scenario, label, received_at) for _, row in frame.iterrows()]
     statement = (
         insert(Reading)
-        .values(records)
         .on_conflict_do_nothing(index_elements=["host_id", "ts", "scenario"])
         .returning(Reading.host_id, Reading.ts)
     )
-    inserted = {(host, pd.Timestamp(ts)) for host, ts in session.execute(statement).all()}
+    result = session.execute(statement, records)
+    inserted = {(host, pd.Timestamp(ts)) for host, ts in result.all()}
     keys = list(zip(frame["host_id"], frame["ts"], strict=True))
     return frame[[key in inserted for key in keys]]
 

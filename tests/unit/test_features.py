@@ -180,3 +180,19 @@ def test_total_scale_uses_only_hosts_valid_at_both_instants() -> None:
     _, total = compute_seasonal_scale(grid, HOSTS, GRID_START + 144 * STEP, GRID_START + 200 * STEP)
 
     assert total == pytest.approx(0.0)
+
+
+def test_vectorized_history_matches_per_host_rolling_reference() -> None:
+    grid = make_grid(400)
+    grid.loc[grid.sample(frac=0.2, random_state=3).index, ["power"]] = np.nan
+    frame = select_valid_readings(grid, HOSTS)
+
+    result = add_power_history(frame, 6)
+
+    power = frame.groupby("host_id", sort=False)["power"]
+    expected_mean = power.transform(lambda series: series.rolling(36, min_periods=18).mean())
+    expected_count = power.transform(
+        lambda series: series.notna().rolling(144, min_periods=1).sum()
+    )
+    pd.testing.assert_series_equal(result["power_mean_6h"], expected_mean, check_names=False)
+    pd.testing.assert_series_equal(result["readings_last_24h"], expected_count, check_names=False)
