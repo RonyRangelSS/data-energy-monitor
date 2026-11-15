@@ -1,0 +1,342 @@
+{
+  "experiment": "e2_expected_consumption",
+  "created_at": "2026-11-15T21:34:46.625755+00:00",
+  "configuration": {
+    "experiment": "e2_e3",
+    "seed": 42,
+    "source_timezone": "Australia/Melbourne",
+    "processed_dir": "data/processed",
+    "e1_report_dir": "artifacts/experiments",
+    "output_dir": "artifacts/experiments",
+    "models_dir": "artifacts/models",
+    "datasets": {
+      "d1": "data/raw/dataset1_combined.csv"
+    },
+    "freeze_file": "protocol_freeze_e2_e3.json",
+    "selection_files": [
+      "e2_expected_consumption_selection_d1.json",
+      "e3_detection_selection_d1.json"
+    ],
+    "training_start_candidates_local": [
+      "2019-03-15T00:00:00",
+      "2019-02-25T00:00:00",
+      null
+    ],
+    "statistics_start_local": "2019-03-15T00:00:00",
+    "out_of_fold_blocks": 5,
+    "operational_expected_model": "lightgbm_quantile",
+    "default_hyperparameters": {
+      "lightgbm_quantile": {
+        "n_estimators": 300,
+        "num_leaves": 63,
+        "learning_rate": 0.05,
+        "min_child_samples": 20
+      }
+    },
+    "hyperparameter_grid": {
+      "lightgbm_quantile": {
+        "num_leaves": [
+          31,
+          127
+        ],
+        "min_child_samples": [
+          20,
+          200
+        ]
+      }
+    },
+    "detection": {
+      "consecutive": 2,
+      "events_per_seed": 50,
+      "magnitudes": [
+        0.1,
+        0.2,
+        0.4
+      ],
+      "durations_slots": [
+        3,
+        12,
+        36
+      ],
+      "validation_seeds": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110
+      ],
+      "test_seeds": [
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210
+      ],
+      "tuning_kinds": [
+        "offset",
+        "drift",
+        "stuck",
+        "zero_load_high_power"
+      ],
+      "families": {
+        "e3b_legit_peaks": [
+          "legit_peak"
+        ],
+        "e3c_excess_without_load": [
+          "offset",
+          "drift",
+          "stuck"
+        ],
+        "e3d_high_power_zero_load": [
+          "zero_load_high_power"
+        ]
+      },
+      "grids": {
+        "deviation": [
+          {
+            "open_threshold": 2.5,
+            "close_threshold": 1.5
+          },
+          {
+            "open_threshold": 3.0,
+            "close_threshold": 2.0
+          },
+          {
+            "open_threshold": 3.5,
+            "close_threshold": 2.5
+          },
+          {
+            "open_threshold": 4.0,
+            "close_threshold": 3.0
+          },
+          {
+            "open_threshold": 5.0,
+            "close_threshold": 4.0
+          }
+        ],
+        "fixed_threshold": [
+          {
+            "percentile": 90.0
+          },
+          {
+            "percentile": 95.0
+          },
+          {
+            "percentile": 99.0
+          }
+        ],
+        "isolation_forest": [
+          {
+            "percentile": 95.0
+          },
+          {
+            "percentile": 99.0
+          },
+          {
+            "percentile": 99.5
+          }
+        ]
+      },
+      "top_episodes": 20
+    }
+  },
+  "seed": 42,
+  "code_version": {
+    "commit": "bc616bed9a9e64d4d15a97a00df2903117722a49",
+    "has_uncommitted_changes": false
+  },
+  "package_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "data_file": "dataset1_combined.csv",
+  "data_sha256": "18592c5a1a9edf021cb16e5775cd12bfb1479d244c10e4d913bf18cefe7b0256",
+  "metrics": {
+    "stage": "selection",
+    "dataset": "d1",
+    "eligible_hosts": 76,
+    "models": {
+      "cpu_bin_mean": {
+        "window_search": [
+          {
+            "label": "2019-03-15T00:00:00",
+            "start_utc": "2019-03-14T13:00:00+00:00",
+            "train_rows": 634676,
+            "validation_mae": 4.812960838316052
+          },
+          {
+            "label": "2019-02-25T00:00:00",
+            "start_utc": "2019-02-24T13:00:00+00:00",
+            "train_rows": 816353,
+            "validation_mae": 4.879547844803026
+          },
+          {
+            "label": "file_start",
+            "start_utc": "2018-10-09T00:20:00+00:00",
+            "train_rows": 2227205,
+            "validation_mae": 11.467817112089879
+          }
+        ],
+        "chosen_window": {
+          "label": "2019-03-15T00:00:00",
+          "start_utc": "2019-03-14T13:00:00+00:00",
+          "train_rows": 634676,
+          "validation_mae": 4.812960838316052
+        },
+        "hyperparameter_search": [],
+        "chosen_hyperparameters": {},
+        "validation": {
+          "rows": 213332,
+          "mae": 4.812960838316052,
+          "rmse": 8.251893049838108,
+          "coverage_5_95": 0.8548131550822192,
+          "coverage_upper_95": 0.9099853749085932
+        },
+        "model_file": "d1_expected_cpu_bin_mean_1.0.0.joblib"
+      },
+      "lightgbm_quantile": {
+        "window_search": [
+          {
+            "label": "2019-03-15T00:00:00",
+            "start_utc": "2019-03-14T13:00:00+00:00",
+            "train_rows": 634676,
+            "validation_mae": 2.781344711830747
+          },
+          {
+            "label": "2019-02-25T00:00:00",
+            "start_utc": "2019-02-24T13:00:00+00:00",
+            "train_rows": 816353,
+            "validation_mae": 2.7961058982916716
+          },
+          {
+            "label": "file_start",
+            "start_utc": "2018-10-09T00:20:00+00:00",
+            "train_rows": 2227205,
+            "validation_mae": 3.1249683228656244
+          }
+        ],
+        "chosen_window": {
+          "label": "2019-03-15T00:00:00",
+          "start_utc": "2019-03-14T13:00:00+00:00",
+          "train_rows": 634676,
+          "validation_mae": 2.781344711830747
+        },
+        "hyperparameter_search": [
+          {
+            "hyperparameters": {
+              "n_estimators": 300,
+              "num_leaves": 31,
+              "learning_rate": 0.05,
+              "min_child_samples": 20
+            },
+            "validation_mae": 2.841893805949936
+          },
+          {
+            "hyperparameters": {
+              "n_estimators": 300,
+              "num_leaves": 127,
+              "learning_rate": 0.05,
+              "min_child_samples": 20
+            },
+            "validation_mae": 2.690247799607255
+          },
+          {
+            "hyperparameters": {
+              "n_estimators": 300,
+              "num_leaves": 31,
+              "learning_rate": 0.05,
+              "min_child_samples": 200
+            },
+            "validation_mae": 2.848263335184336
+          },
+          {
+            "hyperparameters": {
+              "n_estimators": 300,
+              "num_leaves": 127,
+              "learning_rate": 0.05,
+              "min_child_samples": 200
+            },
+            "validation_mae": 2.7189137897292963
+          }
+        ],
+        "chosen_hyperparameters": {
+          "n_estimators": 300,
+          "num_leaves": 127,
+          "learning_rate": 0.05,
+          "min_child_samples": 20
+        },
+        "validation": {
+          "rows": 213332,
+          "mae": 2.690247799607255,
+          "rmse": 5.857848999487479,
+          "coverage_5_95": 0.842934955843474,
+          "coverage_upper_95": 0.8869414808842555
+        },
+        "model_file": "d1_expected_lightgbm_quantile_1.0.0.joblib"
+      },
+      "linear_regression": {
+        "window_search": [
+          {
+            "label": "2019-03-15T00:00:00",
+            "start_utc": "2019-03-14T13:00:00+00:00",
+            "train_rows": 634676,
+            "validation_mae": 4.436525677876169
+          },
+          {
+            "label": "2019-02-25T00:00:00",
+            "start_utc": "2019-02-24T13:00:00+00:00",
+            "train_rows": 816353,
+            "validation_mae": 4.651873403772867
+          },
+          {
+            "label": "file_start",
+            "start_utc": "2018-10-09T00:20:00+00:00",
+            "train_rows": 2227205,
+            "validation_mae": 9.640678823005421
+          }
+        ],
+        "chosen_window": {
+          "label": "2019-03-15T00:00:00",
+          "start_utc": "2019-03-14T13:00:00+00:00",
+          "train_rows": 634676,
+          "validation_mae": 4.436525677876169
+        },
+        "hyperparameter_search": [],
+        "chosen_hyperparameters": {},
+        "validation": {
+          "rows": 213332,
+          "mae": 4.436525677876169,
+          "rmse": 10.004404856784955
+        },
+        "model_file": "d1_expected_linear_regression_1.0.0.joblib"
+      }
+    },
+    "operational_model": "lightgbm_quantile",
+    "residual_statistics_file": "d1_residual_statistics.json",
+    "residual_statistics_validation": {
+      "out_of_fold": {
+        "share_z_at_least_3_5": 0.11092569328558304,
+        "share_abs_z_at_least_3_5": 0.23749835936474603,
+        "median_host_mad": 0.6821547141626212
+      },
+      "in_sample": {
+        "share_z_at_least_3_5": 0.1578337989612435,
+        "share_abs_z_at_least_3_5": 0.3080503628147676,
+        "median_host_mad": 0.4512883944792492
+      }
+    }
+  }
+}
