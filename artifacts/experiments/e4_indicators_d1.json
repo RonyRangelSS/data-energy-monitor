@@ -1,0 +1,133 @@
+{
+  "experiment": "e4_indicators",
+  "created_at": "2026-11-15T22:00:09.763451+00:00",
+  "configuration": {
+    "experiment": "e4_indicators",
+    "seed": 42,
+    "processed_dir": "data/processed",
+    "e1_report_dir": "artifacts/experiments",
+    "output_dir": "artifacts/experiments",
+    "datasets": {
+      "d1": "data/raw/dataset1_combined.csv"
+    },
+    "idle_thresholds": [
+      5.0,
+      10.0,
+      15.0
+    ],
+    "tariff_kwh": 0.8,
+    "bootstrap_resamples": 2000,
+    "confidence": 0.95
+  },
+  "seed": 42,
+  "code_version": {
+    "commit": "0c2c61e2792c7bb7a043477a35d4e86642ebb62a",
+    "has_uncommitted_changes": false
+  },
+  "package_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "data_file": "dataset1_combined.csv",
+  "data_sha256": "18592c5a1a9edf021cb16e5775cd12bfb1479d244c10e4d913bf18cefe7b0256",
+  "metrics": {
+    "dataset": "d1",
+    "period_utc": [
+      "2019-05-31T12:20:00+00:00",
+      "2019-06-20T00:00:00+00:00"
+    ],
+    "energy_kwh": 6517.393844444444,
+    "thresholds": {
+      "5": {
+        "days": 21,
+        "total": {
+          "energy_kwh": 6517.393844444445,
+          "idle_energy_kwh": 5240.998006666667,
+          "idle_energy_share": 0.8041554848084249,
+          "idle_time_share": 0.8565053531584572,
+          "associated_cost": 5213.9150755555565,
+          "idle_associated_cost": 4192.798405333334,
+          "readings": 213332
+        },
+        "bootstrap": {
+          "idle_energy_share": {
+            "estimate": 0.8041554848084251,
+            "lower": 0.7809955438499663,
+            "upper": 0.8262499902790273
+          },
+          "idle_time_share": {
+            "estimate": 0.8565053531584572,
+            "lower": 0.8385391087414714,
+            "upper": 0.8733870528459198
+          },
+          "mean_daily_energy_kwh": {
+            "estimate": 310.35208783068776,
+            "lower": 271.7338403624339,
+            "upper": 335.6463586322751
+          }
+        }
+      },
+      "10": {
+        "days": 21,
+        "total": {
+          "energy_kwh": 6517.393844444445,
+          "idle_energy_kwh": 5771.664137777778,
+          "idle_energy_share": 0.8855785419040861,
+          "idle_time_share": 0.92683235520222,
+          "associated_cost": 5213.9150755555565,
+          "idle_associated_cost": 4617.331310222223,
+          "readings": 213332
+        },
+        "bootstrap": {
+          "idle_energy_share": {
+            "estimate": 0.8855785419040864,
+            "lower": 0.8628789228463399,
+            "upper": 0.9063029228322174
+          },
+          "idle_time_share": {
+            "estimate": 0.92683235520222,
+            "lower": 0.9116232003080504,
+            "upper": 0.9407366217913862
+          },
+          "mean_daily_energy_kwh": {
+            "estimate": 310.35208783068776,
+            "lower": 271.7338403624339,
+            "upper": 335.6463586322751
+          }
+        }
+      },
+      "15": {
+        "days": 21,
+        "total": {
+          "energy_kwh": 6517.393844444445,
+          "idle_energy_kwh": 5930.547173333334,
+          "idle_energy_share": 0.9099568500664802,
+          "idle_time_share": 0.9451699698123113,
+          "associated_cost": 5213.9150755555565,
+          "idle_associated_cost": 4744.437738666667,
+          "readings": 213332
+        },
+        "bootstrap": {
+          "idle_energy_share": {
+            "estimate": 0.9099568500664803,
+            "lower": 0.8916580722222134,
+            "upper": 0.9258639894100711
+          },
+          "idle_time_share": {
+            "estimate": 0.9451699698123113,
+            "lower": 0.9335562391349115,
+            "upper": 0.955215273169506
+          },
+          "mean_daily_energy_kwh": {
+            "estimate": 310.35208783068776,
+            "lower": 271.7338403624339,
+            "upper": 335.6463586322751
+          }
+        }
+      }
+    }
+  }
+}
