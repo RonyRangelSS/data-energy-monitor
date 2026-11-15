@@ -10,6 +10,8 @@ DATABASE_URL = "postgresql+psycopg://u:s@localhost:5434/energy"
 def minimal_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("DATABASE_URL", DATABASE_URL)
     monkeypatch.setenv("API_KEY", "test-key")
+    for name in ("TEST_DATABASE_URL", "TARIFF_KWH", "DISPLAY_TIMEZONE"):
+        monkeypatch.delenv(name, raising=False)
 
 
 def test_loads_values_from_environment(minimal_environment: None) -> None:
