@@ -1,0 +1,108 @@
+{
+  "experiment": "e6_system",
+  "created_at": "2026-11-15T23:11:06.238086+00:00",
+  "configuration": {
+    "experiment": "e6_system",
+    "seed": 42,
+    "dataset": "d1",
+    "data_file": "data/raw/dataset1_combined.csv",
+    "processed_dir": "data/processed",
+    "e1_report_dir": "artifacts/experiments",
+    "output_dir": "artifacts/experiments",
+    "scenario_prefix": "e6",
+    "warmup_readings": 144,
+    "window_readings": 36,
+    "speeds": [
+      60,
+      600,
+      6000
+    ],
+    "reference_speed": 600
+  },
+  "seed": 42,
+  "code_version": {
+    "commit": "7fe59203ff4a6bcfb5b045dd2500bc2a07c38bdc",
+    "has_uncommitted_changes": false
+  },
+  "package_versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "pyarrow": "26.0.0",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0"
+  },
+  "data_file": "dataset1_combined.csv",
+  "data_sha256": "18592c5a1a9edf021cb16e5775cd12bfb1479d244c10e4d913bf18cefe7b0256",
+  "metrics": {
+    "dataset": "d1",
+    "hosts": 76,
+    "window_utc": [
+      "2019-05-31T12:20:00+00:00",
+      "2019-05-31T18:20:00+00:00"
+    ],
+    "speeds": {
+      "60x": {
+        "scenario": "e6_60x",
+        "speed": 60.0,
+        "batches": 36,
+        "sent_readings": 2736,
+        "accepted": 2736,
+        "duplicates": 0,
+        "rejected": 0,
+        "failed_batches": 0,
+        "elapsed_seconds": 352.65072889998555,
+        "throughput_readings_per_second": 7.758384644586827,
+        "latency_ms_p50": 2626.4161499857437,
+        "latency_ms_p95": 2768.4649500006344,
+        "latency_ms_max": 3098.762599984184,
+        "schedule_lag_seconds_max": 0.004704799968749285,
+        "stored_readings": 2736,
+        "lost_readings_percent": 0.0,
+        "resend_accepted": 0,
+        "resend_duplicates": 76
+      },
+      "600x": {
+        "scenario": "e6_600x",
+        "speed": 600.0,
+        "batches": 36,
+        "sent_readings": 2736,
+        "accepted": 2736,
+        "duplicates": 0,
+        "rejected": 0,
+        "failed_batches": 0,
+        "elapsed_seconds": 35.57081800000742,
+        "throughput_readings_per_second": 76.91698290434111,
+        "latency_ms_p50": 592.0943499950226,
+        "latency_ms_p95": 701.6768499743193,
+        "latency_ms_max": 735.6179000344127,
+        "schedule_lag_seconds_max": 0.004669299989473075,
+        "stored_readings": 2736,
+        "lost_readings_percent": 0.0,
+        "resend_accepted": 0,
+        "resend_duplicates": 76
+      },
+      "6000x": {
+        "scenario": "e6_6000x",
+        "speed": 6000.0,
+        "batches": 36,
+        "sent_readings": 2736,
+        "accepted": 2736,
+        "duplicates": 0,
+        "rejected": 0,
+        "failed_batches": 0,
+        "elapsed_seconds": 22.483423099969514,
+        "throughput_readings_per_second": 121.68965498868853,
+        "latency_ms_p50": 619.443150004372,
+        "latency_ms_p95": 721.2619250058196,
+        "latency_ms_max": 836.0855999635532,
+        "schedule_lag_seconds_max": 18.322681999998167,
+        "stored_readings": 2736,
+        "lost_readings_percent": 0.0,
+        "resend_accepted": 0,
+        "resend_duplicates": 76
+      }
+    },
+    "rnf01_latency_p95_below_500ms": false,
+    "rnf02_no_lost_readings": true
+  }
+}
