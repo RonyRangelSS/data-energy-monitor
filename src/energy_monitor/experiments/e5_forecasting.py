@@ -24,6 +24,7 @@ from energy_monitor.experiments.evaluation import (
     build_predictions,
     compare_paired_errors,
     evaluate_forecast,
+    holm_adjust,
     interval_coverage,
     percent_reduction,
 )
@@ -431,6 +432,17 @@ def compare_final(models: dict[str, dict[str, Any]]) -> dict[str, Any]:
     return comparisons
 
 
+def add_holm_correction(horizons: dict[str, Any]) -> None:
+    family = {
+        (label, comparison): result["p_value"]
+        for label, horizon in horizons.items()
+        for comparison, result in horizon["comparisons"].items()
+    }
+    adjusted = holm_adjust(family)
+    for (label, comparison), value in adjusted.items():
+        horizons[label]["comparisons"][comparison]["p_value_holm"] = value
+
+
 def run_final(name: str, config: dict[str, Any]) -> Path:
     require_frozen_protocol(selection_paths_for(config), freeze_path_for(config))
     context = load_context(name, config, stop_at_validation_end=False)
@@ -450,6 +462,7 @@ def run_final(name: str, config: dict[str, Any]) -> Path:
         horizons[label] = {"models": models, "comparisons": compare_final(models)}
         del frame
         gc.collect()
+    add_holm_correction(horizons)
     metrics = {"stage": "test", "dataset": name, "horizons": horizons}
     data_path = Path(config["datasets"][name])
     record = build_run_record(EXPERIMENT_NAME, config, data_path, config["seed"], metrics)

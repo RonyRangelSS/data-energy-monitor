@@ -7,6 +7,7 @@ from energy_monitor.experiments.evaluation import (
     build_predictions,
     compare_paired_errors,
     evaluate_forecast,
+    holm_adjust,
     interval_coverage,
     mean_absolute_error,
     percent_reduction,
@@ -146,3 +147,16 @@ def test_paired_comparison_of_identical_errors_has_no_effect() -> None:
 
 def test_percent_reduction_is_positive_when_candidate_is_better() -> None:
     assert percent_reduction(10.0, 8.0) == pytest.approx(20.0)
+
+
+def test_holm_adjustment_matches_manual_step_down() -> None:
+    adjusted = holm_adjust({"a": 0.01, "b": 0.04, "c": 0.03, "untested": None})
+
+    assert adjusted["a"] == pytest.approx(0.03)
+    assert adjusted["c"] == pytest.approx(0.06)
+    assert adjusted["b"] == pytest.approx(0.06)
+    assert adjusted["untested"] is None
+
+
+def test_holm_adjustment_never_exceeds_one() -> None:
+    assert holm_adjust({"a": 0.6, "b": 0.7}) == {"a": 1.0, "b": 1.0}

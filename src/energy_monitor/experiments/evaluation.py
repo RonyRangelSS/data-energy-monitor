@@ -128,3 +128,13 @@ def compare_paired_errors(first: pd.Series, second: pd.Series) -> dict[str, Any]
 
 def percent_reduction(baseline: float, candidate: float) -> float:
     return (baseline - candidate) / baseline * 100
+
+
+def holm_adjust(p_values: dict[str, float | None]) -> dict[str, float | None]:
+    tested = sorted((value, key) for key, value in p_values.items() if value is not None)
+    adjusted: dict[str, float | None] = {key: None for key in p_values}
+    running_max = 0.0
+    for position, (value, key) in enumerate(tested):
+        running_max = max(running_max, (len(tested) - position) * value)
+        adjusted[key] = min(1.0, running_max)
+    return adjusted

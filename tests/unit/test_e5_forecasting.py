@@ -172,6 +172,8 @@ def test_final_stage_reports_details_and_comparisons(final_result: dict[str, Any
     assert "interval_coverage_5_95" not in horizon["models"]["linear_regression"]["with_load"]
     assert "lightgbm_with_load_vs_history_only" in horizon["comparisons"]
     assert "lightgbm_vs_linear_with_load" in horizon["comparisons"]
+    corrected = [item for item in horizon["comparisons"].values() if item["p_value"] is not None]
+    assert all(item["p_value_holm"] >= item["p_value"] for item in corrected)
 
 
 def test_final_stage_saves_traceable_models(
