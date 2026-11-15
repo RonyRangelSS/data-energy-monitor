@@ -48,11 +48,12 @@ def test_series_joins_real_expected_and_forecast(loaded_client: TestClient) -> N
 
 def test_alerts_can_be_filtered(loaded_client: TestClient) -> None:
     alerts = loaded_client.get("/alerts", params={"scenario": "demo"}).json()
-    other = loaded_client.get("/alerts", params={"scenario": "demo", "host_id": "h2"}).json()
+    only_h1 = loaded_client.get("/alerts", params={"scenario": "demo", "host_id": "h1"}).json()
+    closed = loaded_client.get("/alerts", params={"scenario": "demo", "status": "closed"}).json()
 
-    assert len(alerts) >= 1
-    assert alerts[0]["host_id"] == "h1"
-    assert other == []
+    assert any(item["host_id"] == "h1" for item in alerts)
+    assert only_h1 and all(item["host_id"] == "h1" for item in only_h1)
+    assert all(item["status"] == "closed" for item in closed)
 
 
 def test_indicators_use_default_or_requested_tariff(loaded_client: TestClient) -> None:
