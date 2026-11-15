@@ -47,11 +47,20 @@ detection:
       - {open_threshold: 3.5, close_threshold: 2.5}
       - {open_threshold: 4.0, close_threshold: 3.0}
       - {open_threshold: 5.0, close_threshold: 4.0}
+      - {open_threshold: 6.0, close_threshold: 5.0}
+      - {open_threshold: 8.0, close_threshold: 7.0}
+      - {open_threshold: 10.0, close_threshold: 9.0}
+      - {open_threshold: 15.0, close_threshold: 14.0}
+      - {open_threshold: 20.0, close_threshold: 19.0}
     fixed_threshold:
       - {percentile: 90.0}
       - {percentile: 95.0}
       - {percentile: 99.0}
+      - {percentile: 99.5}
+      - {percentile: 100.0}
     isolation_forest:
+      - {percentile: 80.0}
+      - {percentile: 90.0}
       - {percentile: 95.0}
       - {percentile: 99.0}
       - {percentile: 99.5}
