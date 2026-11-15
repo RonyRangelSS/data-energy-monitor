@@ -1,3 +1,16 @@
+x-app: &app
+  build: .
+  image: energy-monitor:1.0.0
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-energy}:${POSTGRES_PASSWORD:-energy}@db:5432/${POSTGRES_DB:-energy}
+    MODELS_DIR: /app/artifacts/models
+    EXPERIMENTS_DIR: /app/artifacts/experiments
+    API_URL: http://api:8000
+  volumes:
+    - ./artifacts:/app/artifacts:ro
+    - ./data:/app/data:ro
+
 services:
   db:
     image: postgres:17-alpine
@@ -30,6 +43,48 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  api:
+    <<: *app
+    profiles: ["app"]
+    command: >-
+      sh -c "alembic upgrade head &&
+      uvicorn --factory energy_monitor.api.app:create_app --host 0.0.0.0 --port 8000"
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  dashboard:
+    <<: *app
+    profiles: ["app"]
+    command: >-
+      streamlit run src/energy_monitor/dashboard/app.py
+      --server.port 8501 --server.address 0.0.0.0 --server.headless true
+    ports:
+      - "${DASHBOARD_PORT:-8501}:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  replayer:
+    <<: *app
+    profiles: ["replay"]
+    command: >-
+      python -m energy_monitor.replayer.cli
+      --scenario ${REPLAY_SCENARIO:-demo}
+      --start ${REPLAY_START:-2019-05-30T12:20:00+00:00}
+      --end ${REPLAY_END:-2019-06-02T12:20:00+00:00}
+      --speed ${REPLAY_SPEED:-600}
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   postgres_data:
