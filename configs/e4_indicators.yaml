@@ -1,0 +1,11 @@
+experiment: e4_indicators
+seed: 42
+processed_dir: data/processed
+e1_report_dir: artifacts/experiments
+output_dir: artifacts/experiments
+datasets:
+  d1: data/raw/dataset1_combined.csv
+idle_thresholds: [5.0, 10.0, 15.0]
+tariff_kwh: 0.80
+bootstrap_resamples: 2000
+confidence: 0.95
