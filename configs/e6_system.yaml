@@ -1,0 +1,12 @@
+experiment: e6_system
+seed: 42
+dataset: d1
+data_file: data/raw/dataset1_combined.csv
+processed_dir: data/processed
+e1_report_dir: artifacts/experiments
+output_dir: artifacts/experiments
+scenario_prefix: e6
+warmup_readings: 144
+window_readings: 36
+speeds: [60, 600, 6000]
+reference_speed: 600
