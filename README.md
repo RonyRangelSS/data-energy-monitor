@@ -67,7 +67,7 @@ docker compose --profile app up -d --build
 Para reproduzir o dataset sobre o sistema (cenário `demo`, 600× por padrão):
 
 ```powershell
-docker compose --profile replay run --rm replayer
+docker compose --profile app --profile replay run --rm replayer
 ```
 
 Ou, fora do Docker, com a API local:
