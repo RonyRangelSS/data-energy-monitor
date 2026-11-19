@@ -282,6 +282,7 @@ dependencies = [
     { name = "httpx" },
     { name = "joblib" },
     { name = "lightgbm" },
+    { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "psycopg", extra = ["binary"] },
@@ -303,7 +304,6 @@ dev = [
 ]
 notebook = [
     { name = "ipykernel" },
-    { name = "matplotlib" },
     { name = "openpyxl" },
 ]
 
@@ -314,6 +314,7 @@ requires-dist = [
     { name = "httpx", specifier = "==0.28.1" },
     { name = "joblib", specifier = "==1.6.0" },
     { name = "lightgbm", specifier = "==4.7.0" },
+    { name = "matplotlib", specifier = "==3.11.2" },
     { name = "numpy", specifier = "==2.5.4" },
     { name = "pandas", specifier = "==3.1.0" },
     { name = "psycopg", extras = ["binary"], specifier = "==3.3.6" },
@@ -335,7 +336,6 @@ dev = [
 ]
 notebook = [
     { name = "ipykernel", specifier = "==7.4.0" },
-    { name = "matplotlib", specifier = "==3.11.2" },
     { name = "openpyxl", specifier = "==3.1.5" },
 ]
 

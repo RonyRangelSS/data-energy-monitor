@@ -50,6 +50,9 @@ Rode as etapas na ordem abaixo. Cada etapa grava um relatório JSON em `artifact
 | E2/E3: teste | `uv run python -m energy_monitor.experiments.e2_expected_consumption --stage final` e depois `uv run python -m energy_monitor.experiments.e3_detection --stage final` | `e2_*_test_d1.json`, `e3_*_test_d1.json` |
 | E4: indicadores | `uv run python -m energy_monitor.experiments.e4_indicators` | `e4_indicators_d1.json` |
 | E6: sistema | com a API no ar: `uv run python -m energy_monitor.experiments.e6_system` | `e6_system_d1.json` |
+| Gráficos | `uv run python -m energy_monitor.experiments.figures` | PNGs em `artifacts/figures/` |
+
+Os gráficos são gerados a partir dos relatórios JSON. Os da quebra estrutural e da escala do z também usam a grade do D1 e as estatísticas de resíduos, e só são gerados quando esses arquivos existem.
 
 O congelamento só funciona com o código commitado. A etapa de teste falha se o protocolo não estiver congelado ou se a seleção mudar depois dele.
 
