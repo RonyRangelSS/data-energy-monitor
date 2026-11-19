@@ -8,6 +8,8 @@ from matplotlib.figure import Figure
 from energy_monitor.experiments.figures import (
     FIGURES,
     generate_figures,
+    host_coverage_rows,
+    host_mase_rows,
     load_effect_rows,
     load_reports,
     p_value_text,
@@ -43,6 +45,23 @@ def test_load_effect_rows_match_reported_reductions(reports):
     reduction = expected["lightgbm_with_load_vs_history_only"]["mae_reduction_percent"]
     assert rows.loc[("D1, 1h", "lightgbm"), "reduction"] == pytest.approx(reduction)
     assert len(rows) == 8
+
+
+def test_host_mase_rows_cover_every_host_model_and_horizon(reports):
+    rows = host_mase_rows(reports.e5)
+
+    hosts = {"d1": 76, "d2": 48}
+    for dataset, count in hosts.items():
+        subset = rows[rows["dataset"] == dataset]
+        assert len(subset) == count * 2 * 3
+
+
+def test_host_coverage_rows_mark_excluded_hosts(reports):
+    rows = host_coverage_rows(reports.e1, "d1")
+
+    excluded = rows.loc[rows["excluded"], "host"].unique()
+    assert sorted(excluded) == sorted(reports.e1["coverage"]["excluded_hosts"])
+    assert len(rows) == 81 * 3
 
 
 def test_p_value_text_formats_small_and_regular_values():

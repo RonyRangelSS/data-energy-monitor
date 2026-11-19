@@ -16,6 +16,7 @@ import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Patch
+from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter, ScalarFormatter
 
 from energy_monitor.common.schema import SOURCE_TIMEZONE
 from energy_monitor.models.expected.residuals import MAD_SCALE
@@ -75,6 +76,7 @@ DETECTOR_STYLES: Final = {
     "fixed_threshold": (GRAY, "s", "--"),
     "isolation_forest": (ORANGE, "^", ":"),
 }
+PARTITION_LABELS: Final = {"train": "Treino", "validation": "Validação", "test": "Teste"}
 PARTITION_COLORS: Final = {"treino": "#eaf2fc", "validação": "#fdf3dc", "teste": "#fdeee7"}
 
 STYLE: Final = {
@@ -100,6 +102,7 @@ STYLE: Final = {
 @dataclass(frozen=True)
 class Reports:
     e1: dict[str, Any]
+    e1_d2: dict[str, Any]
     e2: dict[str, Any]
     e3: dict[str, Any]
     e4: dict[str, Any]
@@ -115,6 +118,7 @@ def read_metrics(path: Path) -> dict[str, Any]:
 def load_reports(directory: Path) -> Reports:
     return Reports(
         e1=read_metrics(directory / "e1_data_quality_d1.json"),
+        e1_d2=read_metrics(directory / "e1_data_quality_d2.json"),
         e2=read_metrics(directory / "e2_expected_consumption_test_d1.json"),
         e3=read_metrics(directory / "e3_detection_test_d1.json"),
         e4=read_metrics(directory / "e4_indicators_d1.json"),
@@ -135,8 +139,29 @@ def new_figure(width: float, height: float, columns: int = 1, **options: Any) ->
         return plt.subplots(1, columns, figsize=(width, height), **options)
 
 
+def comma_number(value: float, _position: int | None = None) -> str:
+    return f"{value:g}".replace(".", ",")
+
+
+def log_subdivisions(limits: tuple[float, float]) -> tuple[float, ...]:
+    low, high = sorted(limits)
+    decades = np.log10(high) - np.log10(max(low, 1e-12))
+    return (1.0, 2.0, 5.0) if decades <= 2.5 else (1.0,)
+
+
+def use_decimal_comma(axis_part: Any, limits: tuple[float, float]) -> None:
+    if axis_part.get_scale() == "log":
+        axis_part.set_major_locator(LogLocator(base=10, subs=log_subdivisions(limits)))
+        axis_part.set_major_formatter(FuncFormatter(comma_number))
+        axis_part.set_minor_formatter(NullFormatter())
+    elif isinstance(axis_part.get_major_formatter(), ScalarFormatter):
+        axis_part.set_major_formatter(FuncFormatter(comma_number))
+
+
 def apply_style(figure: Figure) -> Figure:
     for axis in figure.axes:
+        use_decimal_comma(axis.xaxis, axis.get_xlim())
+        use_decimal_comma(axis.yaxis, axis.get_ylim())
         axis.spines[["top", "right"]].set_visible(False)
         axis.grid(True, color=GRID_COLOR, linewidth=0.6)
         axis.set_axisbelow(True)
@@ -230,6 +255,149 @@ def plot_forecast_mase(e5: dict[str, dict[str, Any]], statistic: str = "mase_med
     name = "MASE mediano" if statistic == "mase_median" else "MASE médio"
     axes[0].set_ylabel(f"{name} no teste (menor é melhor)")
     bottom_legend(figure, axes[0], 3)
+    return apply_style(figure)
+
+
+def host_mase_rows(e5: dict[str, dict[str, Any]]) -> pd.DataFrame:
+    rows = []
+    for dataset in DATASETS:
+        for horizon in HORIZONS:
+            models = e5[dataset]["horizons"][horizon]["models"]
+            for model in FORECAST_MODELS:
+                variant = "history_only" if model == "seasonal_naive" else "with_load"
+                for host, values in models[model][variant]["per_host"].items():
+                    rows.append(
+                        {
+                            "dataset": dataset,
+                            "horizon": horizon,
+                            "model": model,
+                            "host": host,
+                            "mase": values["mase"],
+                        }
+                    )
+    return pd.DataFrame(rows)
+
+
+def plot_host_mase_distribution(e5: dict[str, dict[str, Any]]) -> Figure:
+    rows = host_mase_rows(e5)
+    figure, axes = new_figure(10, 4.4, 2, sharey=True)
+    width = 0.8 / len(FORECAST_MODELS)
+    for axis, dataset in zip(axes, DATASETS, strict=True):
+        for index, model in enumerate(FORECAST_MODELS):
+            offset = (index - (len(FORECAST_MODELS) - 1) / 2) * width
+            positions = [h + offset for h in range(len(HORIZONS))]
+            values = [
+                rows.query("dataset == @dataset and horizon == @h and model == @model")["mase"]
+                for h in HORIZONS
+            ]
+            boxes = axis.boxplot(
+                values,
+                positions=positions,
+                widths=width * 0.8,
+                patch_artist=True,
+                medianprops={"color": INK},
+                flierprops={"markersize": 2.5, "markeredgecolor": MUTED},
+            )
+            for patch in boxes["boxes"]:
+                patch.set_facecolor(MODEL_COLORS[model])
+                patch.set_alpha(0.75)
+            means = [
+                e5[dataset]["horizons"][h]["models"][model][
+                    "history_only" if model == "seasonal_naive" else "with_load"
+                ]["mase"]
+                for h in HORIZONS
+            ]
+            axis.scatter(positions, means, marker="D", color=INK, s=18, zorder=3)
+        axis.axhline(1, color=MUTED, linewidth=1, linestyle="--")
+        axis.set_yscale("log")
+        axis.set_xticks(range(len(HORIZONS)), [HORIZON_LABELS[h] for h in HORIZONS])
+        axis.set_title(dataset.upper())
+        axis.grid(axis="x", visible=False)
+    axes[0].set_ylabel("MASE por servidor no teste (escala logarítmica)")
+    handles = [
+        Patch(facecolor=MODEL_COLORS[model], alpha=0.75, label=model_variant_label(model))
+        for model in FORECAST_MODELS
+    ]
+    handles.append(
+        axes[0].scatter([], [], marker="D", color=INK, s=18, label="Média entre servidores")
+    )
+    figure.legend(
+        handles=handles,
+        loc="lower center",
+        ncol=4,
+        fontsize=8.5,
+        frameon=False,
+        bbox_to_anchor=(0.5, -0.06),
+    )
+    return apply_style(figure)
+
+
+def model_variant_label(model: str) -> str:
+    if model == "seasonal_naive":
+        return MODEL_LABELS[model]
+    return f"{MODEL_LABELS[model]} (com carga)"
+
+
+def host_coverage_rows(e1: dict[str, Any], dataset: str) -> pd.DataFrame:
+    coverage = e1["coverage"]
+    excluded = set(coverage["excluded_hosts"])
+    return pd.DataFrame(
+        [
+            {
+                "dataset": dataset,
+                "host": host,
+                "partition": partition,
+                "coverage": values[partition] * 100,
+                "excluded": host in excluded,
+            }
+            for host, values in coverage["per_host"].items()
+            for partition in coverage["partitions"]
+        ]
+    )
+
+
+def plot_host_coverage(e1: dict[str, Any], e1_d2: dict[str, Any]) -> Figure:
+    figure, axes = new_figure(10, 4.2, 2, sharey=True)
+    generator = np.random.default_rng(0)
+    for axis, (dataset, report) in zip(axes, (("d1", e1), ("d2", e1_d2)), strict=True):
+        rows = host_coverage_rows(report, dataset)
+        partitions = list(report["coverage"]["partitions"])
+        for position, partition in enumerate(partitions):
+            subset = rows[rows["partition"] == partition]
+            jitter = generator.uniform(-0.18, 0.18, len(subset))
+            colors = np.where(subset["excluded"], ORANGE, BLUE)
+            axis.scatter(
+                position + jitter, subset["coverage"], c=colors, s=14, alpha=0.8, linewidths=0
+            )
+        threshold = report["coverage"]["min_coverage"] * 100
+        axis.axhline(threshold, color=MUTED, linewidth=1, linestyle="--")
+        axis.text(
+            len(partitions) - 0.5,
+            threshold + 1.5,
+            f"mínimo exigido: {threshold:.0f}%",
+            ha="right",
+            fontsize=8,
+            color=MUTED,
+        )
+        included = report["coverage"]["eligible_count"]
+        total = len(report["coverage"]["per_host"])
+        axis.set_title(f"{dataset.upper()}: {included} de {total} servidores incluídos")
+        axis.set_xticks(range(len(partitions)), [PARTITION_LABELS[p] for p in partitions])
+        axis.set_ylim(-5, 105)
+        axis.grid(axis="x", visible=False)
+    axes[0].set_ylabel("Leituras válidas por servidor (%)")
+    handles = [
+        Patch(facecolor=BLUE, label="Servidor incluído"),
+        Patch(facecolor=ORANGE, label="Servidor excluído"),
+    ]
+    figure.legend(
+        handles=handles,
+        loc="lower center",
+        ncol=2,
+        fontsize=8.5,
+        frameon=False,
+        bbox_to_anchor=(0.5, -0.06),
+    )
     return apply_style(figure)
 
 
@@ -438,9 +606,10 @@ def plot_expected_consumption(e2: dict[str, Any]) -> Figure:
         axis.annotate(
             f"MAE geral {decimal(overall)} W",
             (overall, position),
-            xytext=(0, -24),
+            xytext=(0, -27),
             textcoords="offset points",
             ha="center",
+            va="top",
             fontsize=8,
         )
     axis.set_yticks(range(1, len(models) + 1), [MODEL_LABELS[model] for model in models])
@@ -575,7 +744,7 @@ def plot_idle_energy(e4: dict[str, Any]) -> Figure:
     axis.set_ylim(0, 105)
     axis.set_ylabel("Parcela do período de teste (%), IC 95%")
     axis.set_title(f"Energia total no teste: {decimal(e4['energy_kwh'], 1)} kWh")
-    axis.legend(loc="lower right", fontsize=8.5)
+    bottom_legend(figure, axis, 2)
     axis.grid(axis="x", visible=False)
     return apply_style(figure)
 
@@ -677,6 +846,8 @@ def plot_structural_break(
 FIGURES: Final[dict[str, Callable[[Reports], Figure]]] = {
     "h1_mase_mediano": lambda r: plot_forecast_mase(r.e5, "mase_median"),
     "h1_mase_medio": lambda r: plot_forecast_mase(r.e5, "mase"),
+    "h1_mase_por_servidor": lambda r: plot_host_mase_distribution(r.e5),
+    "e1_cobertura_por_servidor": lambda r: plot_host_coverage(r.e1, r.e1_d2),
     "h1_erro_por_servidor": lambda r: plot_paired_host_errors(r.e5, "1h"),
     "h1_erro_total_data_center": lambda r: plot_total_forecast_error(r.e5),
     "h2_efeito_da_carga": lambda r: plot_load_effect(r.e5),
