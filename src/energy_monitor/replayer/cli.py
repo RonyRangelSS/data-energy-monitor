@@ -12,6 +12,7 @@ from energy_monitor.experiments.context import boundaries_from_report, read_qual
 from energy_monitor.replayer.injection import load_injection_plan
 from energy_monitor.replayer.sender import replay
 from energy_monitor.replayer.source import (
+    ensure_outside_training,
     inject,
     load_period,
     training_reference_rows,
@@ -46,10 +47,12 @@ def main(arguments: Sequence[str] | None = None) -> None:
     rows = load_period(grid_path, hosts, pd.Timestamp(parsed.start), pd.Timestamp(parsed.end))
     if parsed.injection is not None:
         plan = load_injection_plan(parsed.injection)
+        boundaries = boundaries_from_report(report)
+        ensure_outside_training(plan, boundaries)
         reference = training_reference_rows(
             grid_path,
             hosts,
-            boundaries_from_report(report),
+            boundaries,
             local_to_utc(STATISTICS_START_LOCAL, SOURCE_TIMEZONE),
         )
         rows, events = inject(rows, reference, hosts, plan)

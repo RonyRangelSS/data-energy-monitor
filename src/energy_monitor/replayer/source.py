@@ -42,6 +42,11 @@ def training_reference_rows(
     return window.dropna(subset=["power", "cpu_load"])
 
 
+def ensure_outside_training(plan: InjectionPlan, boundaries: SplitBoundaries) -> None:
+    if plan.start < boundaries.train_end:
+        raise ValueError("As anomalias só podem ser injetadas na validação e no teste")
+
+
 def inject(
     rows: pd.DataFrame, reference_rows: pd.DataFrame, hosts: Sequence[str], plan: InjectionPlan
 ) -> tuple[pd.DataFrame, list[InjectedEvent]]:

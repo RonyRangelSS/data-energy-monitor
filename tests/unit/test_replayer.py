@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from energy_monitor.common.splitting import SplitBoundaries
 from energy_monitor.replayer.injection import InjectionPlan
 from energy_monitor.replayer.sender import (
     interval_seconds,
@@ -13,7 +14,12 @@ from energy_monitor.replayer.sender import (
     reading_payload,
     replay,
 )
-from energy_monitor.replayer.source import inject, load_period, write_event_log
+from energy_monitor.replayer.source import (
+    ensure_outside_training,
+    inject,
+    load_period,
+    write_event_log,
+)
 from tests.unit.forecast_helpers import GRID_START, make_grid
 
 STEP = pd.Timedelta(minutes=10)
@@ -133,3 +139,19 @@ def test_summary_reports_percentiles_in_milliseconds(latencies: list[float]) -> 
 
     assert summary["latency_ms_p50"] == pytest.approx(200.0)
     assert summary["throughput_readings_per_second"] == 10.0
+
+
+def test_injection_inside_training_is_refused():
+    boundaries = SplitBoundaries(
+        GRID_START, GRID_START + 100 * STEP, GRID_START + 200 * STEP, GRID_START + 300 * STEP
+    )
+    inside = InjectionPlan(
+        ("offset",), (0.1,), (3,), 1, 1, GRID_START + 50 * STEP, GRID_START + 150 * STEP
+    )
+    after = InjectionPlan(
+        ("offset",), (0.1,), (3,), 1, 1, GRID_START + 100 * STEP, GRID_START + 150 * STEP
+    )
+
+    with pytest.raises(ValueError, match="validação e no teste"):
+        ensure_outside_training(inside, boundaries)
+    ensure_outside_training(after, boundaries)
