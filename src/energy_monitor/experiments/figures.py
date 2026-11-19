@@ -516,7 +516,7 @@ def plot_load_effect(e5: dict[str, dict[str, Any]]) -> Figure:
     axis.text(
         len(labels) - 0.5,
         H2_THRESHOLD_PERCENT + 0.3,
-        "limiar da H2: redução de 10%",
+        "redução de 10%",
         ha="right",
         va="bottom",
         fontsize=8,
@@ -643,8 +643,10 @@ def plot_detection_rates(e3: dict[str, Any]) -> Figure:
         axis.set_xticks(percentages, [f"{p:.0f}%" for p in percentages])
         axis.set_ylim(-3, 105)
     axes[0].set_ylabel("Anomalias detectadas (%)")
-    figure.supxlabel("Magnitude da anomalia injetada (fração da potência média)", fontsize=9)
-    bottom_legend(figure, axes[0], 3, -0.1)
+    figure.supxlabel(
+        "Magnitude da anomalia injetada (fração da potência média)", fontsize=9, y=-0.04
+    )
+    bottom_legend(figure, axes[0], 3, -0.16)
     return apply_style(figure)
 
 
@@ -707,7 +709,9 @@ def plot_residual_scale(statistics: dict[str, dict[str, float]], open_threshold:
         f"(mediana {decimal(float(trigger.median()), 1)} W; "
         f"MAD < 0,001 W em {negligible} servidores)"
     )
-    axis.set_xlabel("Servidores do D1, em ordem crescente")
+    axis.set_xlabel(
+        "Servidores do D1, em ordem crescente (valores abaixo de 0,01 W exibidos em 0,01 W)"
+    )
     axis.set_ylabel("Desvio necessário (W, escala logarítmica)")
     axis.set_xticks([])
     axis.grid(axis="x", visible=False)
