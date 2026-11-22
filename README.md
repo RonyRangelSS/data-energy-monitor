@@ -178,17 +178,6 @@ O reprodutor também injeta anomalias a partir de um plano YAML com semente (`--
 | `DELETE /scenarios/{nome}` | Apaga um cenário (chave em `X-API-Key`) |
 | `GET /health` | Saúde da API e do banco |
 
-## Problemas comuns
-
-| Sintoma | Causa e solução |
-|---|---|
-| `MemoryError` ou `ArrowMemoryError` | Pouca memória livre. Feche outros programas e rode uma etapa por vez. |
-| `TEST_DATABASE_URL não configurada` | Falta o `.env` (passo 3) ou o `db_test` não está no ar (passo 4). |
-| Porta 5434, 5435, 8000 ou 8501 ocupada | Troque `POSTGRES_PORT`, `POSTGRES_TEST_PORT`, `API_PORT` ou `DASHBOARD_PORT` no `.env`. |
-| O congelamento recusa rodar | Há alterações não commitadas. Faça o commit e rode de novo. |
-| A API não sobe no Docker | Os modelos não existem em `artifacts/models/`. Rode as etapas 1 a 9. |
-| O painel não mostra dados | O reprodutor ainda não enviou leituras do cenário escolhido. |
-
 ## Estrutura
 
 ```
