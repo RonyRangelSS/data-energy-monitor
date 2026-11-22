@@ -11,4 +11,3 @@ tests
 htmlcov
 .coverage
 **/__pycache__
-CLAUDE.md

@@ -1,7 +1,5 @@
-# Documentação local (DP36)
-CLAUDE.md
+# Documentação local
 docs/
-.claude/
 
 # Configuração local
 .env
